@@ -1,0 +1,21 @@
+@import "tailwindcss";
+
+.milkdown-crepe {
+  display: flex;
+  flex-direction: column;
+}
+
+.milkdown .editor {
+  line-height: 1.5; /* Ajusta o alinhamento vertical do cursor */
+  tab-size: 4;
+  caret-color: transparent;
+}
+
+.milkdown-crepe .milkdown {
+  position: relative;
+  z-index: 10;
+}
+
+.milkdown-crepe .milkdown-cursor {
+  display: block !important;
+}
