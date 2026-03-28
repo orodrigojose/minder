@@ -4,13 +4,15 @@ import dev.rodrigojose.minder.application.usecases.edge.CreateEdge;
 import dev.rodrigojose.minder.application.usecases.edge.DeleteEdge;
 import dev.rodrigojose.minder.application.usecases.edge.GetAllEdge;
 import dev.rodrigojose.minder.domain.edge.Edge;
-import dev.rodrigojose.minder.infrastructure.config.exceptions.ErrorMessage;
+import dev.rodrigojose.minder.infrastructure.StandardResponseDto;
 
 import java.io.IOException;
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.UUID;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -42,25 +44,21 @@ public class EdgeController {
 
   @DeleteMapping("/delete/{id}")
   public ResponseEntity<?> delete(@PathVariable UUID id) {
-    try {
-      deleteEdgeUseCase.execute(id);
-      return ResponseEntity.ok("Deleted");
-
-    } catch (IllegalArgumentException e) {
-      var errorMessage = new ErrorMessage(e.getMessage(), "INVALID_PARAMS");
-      return ResponseEntity.status(400).body(errorMessage);
-    }
+    deleteEdgeUseCase.execute(id);
+    return ResponseEntity.ok("Deleted");
   }
 
   @PostMapping("/create")
-  public ResponseEntity<?> create(@RequestBody Edge edge) throws IOException {
-    try {
-      var response = createEdgeUseCase.execute(edge);
-      return ResponseEntity.ok(response);
-    } catch (IllegalArgumentException e) {
-      var errorMessage = new ErrorMessage(e.getMessage(), "INVALID_PARAMS");
-      return ResponseEntity.status(400).body(errorMessage);
-    }
+  public ResponseEntity<?> create(@RequestBody Edge data) throws IOException {
+    var edge = createEdgeUseCase.execute(data);
+    StandardResponseDto<Edge> response  = new StandardResponseDto<>(
+      LocalDateTime.now(),
+      HttpStatus.OK.value(),
+      "Edge created successfully!",
+      edge
+    );
+
+    return ResponseEntity.ok(response);
   }
 
 }

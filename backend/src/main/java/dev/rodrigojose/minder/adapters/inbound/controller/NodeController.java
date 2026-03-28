@@ -22,7 +22,7 @@ import dev.rodrigojose.minder.application.usecases.node.GetAllNode;
 import dev.rodrigojose.minder.application.usecases.node.UpdateNode;
 import dev.rodrigojose.minder.dtos.NodeUpdateDto;
 import dev.rodrigojose.minder.entity.Node;
-import dev.rodrigojose.minder.infrastructure.config.exceptions.ErrorMessage;
+import dev.rodrigojose.minder.infrastructure.config.exceptions.NodeNotFoundException;
 
 @CrossOrigin
 @RestController
@@ -62,7 +62,7 @@ public class NodeController {
   }
 
   @PostMapping("/create")
-  public ResponseEntity<?> create(@RequestBody Node node) {
+  public ResponseEntity<?> create(@RequestBody Node node) throws NodeNotFoundException, IOException {
     var result = createNodeUseCase.execute(node);
     fileStorageService.create("", node.getFile());
 

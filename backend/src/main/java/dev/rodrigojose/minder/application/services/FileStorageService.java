@@ -12,7 +12,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import dev.rodrigojose.minder.adapters.outbound.repositories.NodeRepository;
-import dev.rodrigojose.minder.infrastructure.config.exceptions.NoteNotFoundException;
+import dev.rodrigojose.minder.infrastructure.config.exceptions.NodeNotFoundException;
 
 @Service
 public class FileStorageService {
@@ -27,13 +27,11 @@ public class FileStorageService {
     return content;
   }
 
-  public void create(String content, String fileName) throws NoteNotFoundException {
-    throw new NoteNotFoundException();
-    /*
-     * Path path = Paths.get("uploads/" + fileName);
-     * Files.createDirectories(path.getParent());
-     * Files.writeString(path, content);
-     */
+  public void create(String content, String fileName) throws NodeNotFoundException, IOException, RuntimeException {
+    Path path = Paths.get("uploads/" + fileName);
+
+    Files.createDirectories(path.getParent());
+    Files.writeString(path, content);
   }
 
   public void delete(UUID id) throws IOException {
