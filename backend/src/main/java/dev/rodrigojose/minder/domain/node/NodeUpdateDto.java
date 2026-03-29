@@ -1,4 +1,4 @@
-package dev.rodrigojose.minder.dtos;
+package dev.rodrigojose.minder.domain.node;
 
 public class NodeUpdateDto {
   private Integer x;

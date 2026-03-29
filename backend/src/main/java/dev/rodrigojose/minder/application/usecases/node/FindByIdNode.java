@@ -6,17 +6,17 @@ import java.util.UUID;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import dev.rodrigojose.minder.adapters.outbound.repositories.NodeRepository;
-import dev.rodrigojose.minder.entity.Node;
+import dev.rodrigojose.minder.adapters.outbound.repositories.NodeRepositoryImpl;
+import dev.rodrigojose.minder.domain.node.Node;
 
 @Service
 public class FindByIdNode {
 
   @Autowired
-  private NodeRepository nodeRepository;
+  private NodeRepositoryImpl repository;
 
   public Optional<Node> execute(UUID id) {
-    return nodeRepository.findById(id);
+    return Optional.ofNullable(repository.findById(id));
   }
 
 }

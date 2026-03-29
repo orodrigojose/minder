@@ -34,11 +34,11 @@ const Mindmap = () => {
 
   useEffect(() => {
     const fetchData = async () => {
-      const data = await api.getNodes();
+      const { data } = await api.getNodes();
       const newNode = data.map((node: INode) => serializerNode(node));
       const edges = await api.getEdges();
 
-      setEdges(edges);
+      setEdges(edges.data);
       setNodes(newNode);
     };
 
@@ -58,13 +58,18 @@ const Mindmap = () => {
     [],
   );
 
+  const onNodesDelete = useCallback(
+    async (nodes: INodeFlow[]) => {
+      for (const node of nodes) {
+        await api.deleteNode(node.id);
+      }
+    },
+    []
+  )
+
   const onNodeDragStop = useCallback(
     async (_event: React.MouseEvent, node: INodeFlow) => {
-      const data = await api.updateNode(
-        node.id,
-        node.position.x,
-        node.position.y,
-      );
+      await api.updateNode(node.id, node.position.x, node.position.y);
     },
     [],
   );
@@ -74,13 +79,12 @@ const Mindmap = () => {
       setEdges((edgesSnapshot) => applyEdgeChanges(changes, edgesSnapshot)),
     [],
   );
+
   const onConnect = useCallback(
     async (params: any) => {
-      const response = await api.createEdge(params);
-      console.log(response);
+      await api.createEdge(params);
       setEdges((edgesSnapshot) => addEdge(params, edgesSnapshot));
     },
-
     [],
   );
 
@@ -119,16 +123,16 @@ const Mindmap = () => {
 
   const onEdgeDoubleClick = useCallback(
     async (_event: React.MouseEvent, edge: IEdge) => {
-      const result = await api.deleteEdge(edge);
+      await api.deleteEdge(edge);
       const newEdges = edges.filter((ed) => ed != edge);
       setEdges(newEdges);
     },
     [],
   );
 
-  const teste = useCallback(
+  const openNode = useCallback(
     async (_event: React.MouseEvent, node: INodeFlow) => {
-      navigate(`/editor/${node.data.label}/${node.id}`, { replace: true });
+      navigate(`/editor/${node.id}`, { replace: true });
     },
     [],
   );
@@ -139,7 +143,8 @@ const Mindmap = () => {
       edges={edges}
       onNodesChange={onNodesChange}
       onNodeDragStop={onNodeDragStop}
-      onNodeDoubleClick={teste}
+      onNodeDoubleClick={openNode}
+      onNodesDelete={onNodesDelete}
       onEdgesChange={onEdgesChange}
       onEdgeDoubleClick={onEdgeDoubleClick}
       onReconnect={onReconnect}

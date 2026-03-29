@@ -38,25 +38,38 @@ public class EdgeController {
   CreateEdge createEdgeUseCase = new CreateEdge();
 
   @GetMapping("/")
-  public ResponseEntity<List<Edge>> getAll() {
-    return ResponseEntity.ok(getAllEdgesUseCase.execute());
+  public ResponseEntity<StandardResponseDto<List<Edge>>> getAll() {
+    var edges = getAllEdgesUseCase.execute();
+
+    StandardResponseDto<List<Edge>> response = new StandardResponseDto<>(
+        LocalDateTime.now(),
+        HttpStatus.OK.value(),
+        "Edge created successfully!",
+        edges);
+
+    return ResponseEntity.ok(response);
   }
 
   @DeleteMapping("/delete/{id}")
-  public ResponseEntity<?> delete(@PathVariable UUID id) {
+  public ResponseEntity<StandardResponseDto<Edge>> delete(@PathVariable UUID id) {
     deleteEdgeUseCase.execute(id);
-    return ResponseEntity.ok("Deleted");
+    StandardResponseDto<Edge> response = new StandardResponseDto<>(
+        LocalDateTime.now(),
+        HttpStatus.OK.value(),
+        "Edge created successfully!",
+        null);
+
+    return ResponseEntity.ok(response);
   }
 
   @PostMapping("/create")
-  public ResponseEntity<?> create(@RequestBody Edge data) throws IOException {
+  public ResponseEntity<StandardResponseDto<Edge>> create(@RequestBody Edge data) throws IOException {
     var edge = createEdgeUseCase.execute(data);
-    StandardResponseDto<Edge> response  = new StandardResponseDto<>(
-      LocalDateTime.now(),
-      HttpStatus.OK.value(),
-      "Edge created successfully!",
-      edge
-    );
+    StandardResponseDto<Edge> response = new StandardResponseDto<>(
+        LocalDateTime.now(),
+        HttpStatus.OK.value(),
+        "Edge created successfully!",
+        edge);
 
     return ResponseEntity.ok(response);
   }

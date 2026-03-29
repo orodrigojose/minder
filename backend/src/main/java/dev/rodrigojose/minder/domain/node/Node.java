@@ -1,29 +1,28 @@
-package dev.rodrigojose.minder.entity;
+package dev.rodrigojose.minder.domain.node;
 
 import java.time.LocalDate;
 import java.util.UUID;
 
-import org.hibernate.annotations.CreationTimestamp;
-
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
-import jakarta.persistence.Table;
-
-@Entity
-@Table(name = "node")
 public class Node {
-  @Id
-  @GeneratedValue(strategy = GenerationType.AUTO)
   private UUID id;
 
   private String file;
   private Integer x;
   private Integer y;
 
-  @CreationTimestamp
   private LocalDate created_at;
+
+  public Node() {
+
+  }
+
+  public Node(UUID id, String file, Integer x, Integer y, LocalDate created_at) {
+    this.id = id;
+    this.file = file;
+    this.x = x;
+    this.y = y;
+    this.created_at = created_at;
+  }
 
   public UUID getId() {
     return id;

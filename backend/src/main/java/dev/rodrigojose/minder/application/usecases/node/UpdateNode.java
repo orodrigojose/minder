@@ -4,19 +4,22 @@ import java.util.UUID;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-
-import dev.rodrigojose.minder.adapters.outbound.repositories.NodeRepository;
-import dev.rodrigojose.minder.dtos.NodeUpdateDto;
-import dev.rodrigojose.minder.entity.Node;
+import dev.rodrigojose.minder.adapters.outbound.repositories.NodeRepositoryImpl;
+import dev.rodrigojose.minder.domain.node.Node;
+import dev.rodrigojose.minder.domain.node.NodeUpdateDto;
+import dev.rodrigojose.minder.infrastructure.config.exceptions.NodeNotFoundException;
 
 @Service
 public class UpdateNode {
   @Autowired
-  private NodeRepository nodeRepository;
+  private NodeRepositoryImpl repository;
 
   public Node execute(UUID id, NodeUpdateDto data) {
-    Node existingNode = nodeRepository.findById(id)
-        .orElseThrow(() -> new RuntimeException("Node not found with id: " + id));
+    Node existingNode = repository.findById(id);
+
+    if (existingNode == null) {
+      throw new NodeNotFoundException("Node not found");
+    }
 
     if (data.getX() != 0) { 
       existingNode.setX(data.getX());
@@ -30,6 +33,6 @@ public class UpdateNode {
       existingNode.setFile(data.getFile());
     }
 
-    return nodeRepository.save(existingNode);
+    return repository.save(existingNode);
   }
 }

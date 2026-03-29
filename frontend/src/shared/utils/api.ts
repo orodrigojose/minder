@@ -2,6 +2,12 @@ import type { IEdge } from "../types/types";
 
 const BASE_URL = import.meta.env.VITE_API_URL;
 
+const getNodeContent = async (id: string) => {
+  const response = await fetch(`${BASE_URL}/node/file/${id}`);
+
+  return await response.json();
+};
+
 const getNodes = async () => {
   const response = await fetch(`${BASE_URL}/node/`);
   return await response.json();
@@ -38,6 +44,14 @@ const createNode = async (nodeName: string) => {
   return await result.json();
 };
 
+const deleteNode = async (id: string) => {
+  const result = await fetch(`${BASE_URL}/node/delete/${id}`, {
+    method: "DELETE",
+  });
+
+  console.log(result);
+};
+
 const getEdges = async () => {
   const response = await fetch(`${BASE_URL}/edge/`);
   return await response.json();
@@ -66,4 +80,13 @@ const deleteEdge = async (edge: IEdge) => {
   return await result.json();
 };
 
-export { getEdges, createEdge, deleteEdge, getNodes, updateNode, createNode };
+export {
+  getEdges,
+  createEdge,
+  deleteEdge,
+  getNodeContent,
+  getNodes,
+  updateNode,
+  createNode,
+  deleteNode,
+};

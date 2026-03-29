@@ -17,7 +17,7 @@ const router = createBrowserRouter([
     children: [
       { index: true, element: <App /> },
       { path: "/minder", element: <Minder /> },
-      { path: "/editor/:file?/:id?", element: <Editor /> },
+      { path: "/editor/:id?", element: <Editor /> },
     ],
   },
 ]);

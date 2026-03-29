@@ -2,6 +2,7 @@ import { Crepe } from "@milkdown/crepe";
 import { Milkdown, MilkdownProvider, useEditor } from "@milkdown/react";
 import { replaceAll } from "@milkdown/utils";
 import { useState, useEffect, useRef } from "react";
+import { getNodeContent } from "../utils/api";
 
 const CrepeEditor = ({ initialContent }: { initialContent: string }) => {
   const crepeRef = useRef<Crepe | null>(null);
@@ -25,16 +26,13 @@ const CrepeEditor = ({ initialContent }: { initialContent: string }) => {
   return <Milkdown />;
 };
 
-export const FileEditor = ({ file, id }: { file: string; id: string }) => {
+export const FileEditor = ({ id }: { id: string }) => {
   const [data, setData] = useState("");
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     const fetchData = async () => {
-      const response = await fetch(
-        `http://localhost:8080/node/file/${file}/${id}`,
-      );
-      const data = await response.text();
+      const { data } = await getNodeContent(id);
       setData(data);
       setLoading(false);
     };

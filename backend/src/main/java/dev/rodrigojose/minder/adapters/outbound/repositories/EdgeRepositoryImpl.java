@@ -45,4 +45,9 @@ public class EdgeRepositoryImpl implements EdgeRepository {
     this.jpaEdgeRepository.deleteById(id);
   }
 
+  @Override
+  public void deleteBySourceOrTarget(UUID sourceUuid, UUID targetUuid) {
+    this.jpaEdgeRepository.deleteBySourceOrTarget(sourceUuid, targetUuid);;
+  }
+
 }

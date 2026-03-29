@@ -1,5 +1,6 @@
 package dev.rodrigojose.minder.infrastructure;
 
+import java.io.IOException;
 import java.time.LocalDateTime;
 
 import org.springframework.http.HttpStatus;
@@ -15,16 +16,25 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
   @ExceptionHandler(NodeNotFoundException.class)
   private ResponseEntity<StandardResponseDto> nodeNotFoundHandler(NodeNotFoundException exception) {
     StandardResponseDto threatResponse = new StandardResponseDto(LocalDateTime.now(), HttpStatus.NOT_FOUND.value(),
-        "Node not found!", null);
+        exception.getMessage(), null);
 
     return ResponseEntity.status(HttpStatus.NOT_FOUND).body(threatResponse);
   }
 
+  @ExceptionHandler(IOException.class)
+  private ResponseEntity<StandardResponseDto> ioExceptionHandler(IOException exception) {
+    StandardResponseDto threatResponse = new StandardResponseDto(LocalDateTime.now(), 
+        HttpStatus.BAD_REQUEST.value(),
+        "Erro ao processar arquivo: " + exception.getMessage(), null);
+
+    return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(threatResponse);
+  }
+
   @ExceptionHandler(RuntimeException.class)
-  private ResponseEntity<StandardResponseDto> runtimeExcpetionHandler(RuntimeException exception) {
+  private ResponseEntity<StandardResponseDto> runtimeExceptionHandler(RuntimeException exception) {
     StandardResponseDto threatResponse = new StandardResponseDto(LocalDateTime.now(),
         HttpStatus.INTERNAL_SERVER_ERROR.value(),
-        "Internal server error!", null);
+        "Erro interno do servidor: " + exception.getMessage(), null);
 
     return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(threatResponse);
   }
