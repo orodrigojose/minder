@@ -1,3 +1,4 @@
+import { Position } from "@xyflow/react";
 import type { INode, INodeFlow } from "../types/types";
 
 const serializerNode = (node: INode): INodeFlow => {
@@ -7,6 +8,8 @@ const serializerNode = (node: INode): INodeFlow => {
   return {
     id: String(node.id),
     position: { x, y },
+    sourcePosition: (node.sourcePosition as Position) || Position.Left,
+    targetPosition: (node.targetPosition as Position) || Position.Right,
     data: { label: node.file },
     type: "default",
   };

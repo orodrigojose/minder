@@ -72,15 +72,11 @@ const Mindmap = () => {
   const onNodesDelete = useCallback(
     async (nodesToDelete: INodeFlow[]) => {
       try {
-        for (const node of nodesToDelete) {
-          await api.deleteNode(node.id);
-        }
-
-        // Recarregar todos os dados após deletar
-        await loadData();
+        await Promise.all(nodesToDelete.map((node) => api.deleteNode(node.id)));
       } catch (error) {
         console.error("Error deleting nodes:", error);
         toast.error("Failed to delete nodes");
+        await loadData();
       }
     },
     [loadData],
@@ -103,8 +99,6 @@ const Mindmap = () => {
     async (params: any) => {
       try {
         await api.createEdge(params);
-
-        // Recarregar todos os dados após criar
         await loadData();
       } catch (error) {
         console.error("Error creating edge:", error);
@@ -160,6 +154,14 @@ const Mindmap = () => {
     [loadData],
   );
 
+  const onEdgesDelete = useCallback(async (edgesToDelete: IEdge[]) => {
+    try {
+      await Promise.all(edgesToDelete.map((edge) => api.deleteEdge(edge)));
+    } catch (error) {
+      console.error("Erro ao deletar conexão", error);
+    }
+  }, []);
+
   const openNode = useCallback(
     async (_event: React.MouseEvent, node: INodeFlow) => {
       navigate(`/editor/${node.id}`, { replace: true });
@@ -185,13 +187,14 @@ const Mindmap = () => {
   };
 
   return (
-    <ReactFlow
+    <ReactFlow<INodeFlow, IEdge>
       nodes={nodes}
       edges={edges}
       onNodesChange={onNodesChange}
       onNodeDragStop={onNodeDragStop}
       onNodeDoubleClick={openNode}
       onNodesDelete={onNodesDelete}
+      onEdgesDelete={onEdgesDelete}
       onEdgesChange={onEdgesChange}
       onEdgeDoubleClick={onEdgeDoubleClick}
       onReconnect={onReconnect}

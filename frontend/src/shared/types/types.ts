@@ -1,8 +1,12 @@
+import type { Position } from "@xyflow/react";
+
 export interface INode {
   id: string;
   x: string;
   y: string;
   file: string;
+  sourcePosition?: string;
+  targetPosition?: string;
   created_at: string;
 }
 
@@ -12,6 +16,8 @@ export interface INodeFlow {
     x: number;
     y: number;
   };
+  sourcePosition?: Position;
+  targetPosition?: Position;
   data: {
     label: string;
   };
