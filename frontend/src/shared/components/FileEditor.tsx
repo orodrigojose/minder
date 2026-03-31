@@ -1,14 +1,51 @@
 import { Crepe } from "@milkdown/crepe";
 import { Milkdown, MilkdownProvider, useEditor } from "@milkdown/react";
-import { replaceAll } from "@milkdown/utils";
+import { getMarkdown, replaceAll } from "@milkdown/utils";
 import { useState, useEffect, useRef } from "react";
-import { getNodeContent } from "../utils/api";
+import { getNodeContent, updateFile } from "../utils/api";
+import { editorViewOptionsCtx } from "@milkdown/kit/core";
 
-const CrepeEditor = ({ initialContent }: { initialContent: string }) => {
+interface CrepeEditorProps {
+  initialContent: string;
+  onSave: (content: string) => void;
+}
+
+const CrepeEditor = ({ initialContent, onSave }: CrepeEditorProps) => {
   const crepeRef = useRef<Crepe | null>(null);
+  const saveTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
-  const { get } = useEditor((root) => {
+  useEditor((root) => {
     const crepe = new Crepe({ root, defaultValue: initialContent });
+
+    crepe.editor.config((ctx) => {
+      ctx.update(editorViewOptionsCtx, (prev) => ({
+        ...prev,
+        handleDOMEvents: {
+          ...prev.handleDOMEvents,
+          keydown: (_view, event) => {
+            if ((event.ctrlKey || event.metaKey) && event.key === "s") {
+              event.preventDefault();
+              const markdown = getMarkdown()(ctx);
+
+              onSave(markdown);
+              return true;
+            }
+            return false;
+          },
+        },
+      }));
+    });
+
+    crepe.on((listener) => {
+      listener.markdownUpdated((_ctx, markdown) => {
+        if (saveTimeoutRef.current) clearTimeout(saveTimeoutRef.current);
+
+        saveTimeoutRef.current = setTimeout(() => {
+          onSave(markdown);
+        }, 3000);
+      });
+    });
+
     crepeRef.current = crepe;
     return crepe;
   });
@@ -40,13 +77,15 @@ export const FileEditor = ({ id }: { id: string }) => {
     fetchData();
   }, []);
 
+  const handleSave = async (content: string) => await updateFile(id, content);
+
   if (loading) return <div>Loading editor content...</div>;
 
   return (
     <div className="w-full h-screen bg-[#1a1a1a]">
       <MilkdownProvider>
         <div className="w-full h-screen px-10 py-4 overflow-y-auto">
-          <CrepeEditor initialContent={data} />
+          <CrepeEditor initialContent={data} onSave={handleSave} />
         </div>
       </MilkdownProvider>
     </div>

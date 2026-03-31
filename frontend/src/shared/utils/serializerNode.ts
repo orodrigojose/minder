@@ -1,10 +1,14 @@
-import type { INode } from "../types/types";
+import type { INode, INodeFlow } from "../types/types";
 
-const serializerNode = (node: INode) => {
+const serializerNode = (node: INode): INodeFlow => {
+  const x = Number(node.x) || 0;
+  const y = Number(node.y) || 0;
+
   return {
-    id: node.id,
-    position: { x: Number(node.x), y: Number(node.y) },
+    id: String(node.id),
+    position: { x, y },
     data: { label: node.file },
+    type: "default",
   };
 };
 

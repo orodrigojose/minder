@@ -80,6 +80,13 @@ const deleteEdge = async (edge: IEdge) => {
   return await result.json();
 };
 
+const updateFile = async (id: string, data: string) => {
+  await fetch(`${BASE_URL}/file/update/${id}`, {
+    method: "PUT",
+    body: data
+  });
+}
+
 export {
   getEdges,
   createEdge,
@@ -89,4 +96,5 @@ export {
   updateNode,
   createNode,
   deleteNode,
+  updateFile
 };

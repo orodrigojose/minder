@@ -3,7 +3,6 @@ import {
   ReactFlow,
   applyNodeChanges,
   applyEdgeChanges,
-  addEdge,
   type NodeChange,
   type EdgeChange,
   Controls,
@@ -20,6 +19,8 @@ import { useNavigate } from "react-router-dom";
 import serializerNode from "../../utils/serializerNode";
 import type { IEdge, INode, INodeFlow } from "../../types/types";
 import React, { useState, useCallback, useEffect, useRef } from "react";
+import toast from "react-hot-toast";
+import { BiCheck } from "react-icons/bi";
 
 const initialNodes: Array<INodeFlow> = [];
 const initialEdges: Array<IEdge> = [];
@@ -32,18 +33,28 @@ const Mindmap = () => {
   const edgeReconnectSuccessful = useRef(true);
   const navigate = useNavigate();
 
-  useEffect(() => {
-    const fetchData = async () => {
-      const { data } = await api.getNodes();
-      const newNode = data.map((node: INode) => serializerNode(node));
-      const edges = await api.getEdges();
+  const loadData = useCallback(async () => {
+    try {
+      const { data: nodesData } = await api.getNodes();
+      const newNodes = nodesData
+        .map((node: INode) => serializerNode(node))
+        .filter(
+          (node: INodeFlow) =>
+            !isNaN(node.position.x) && !isNaN(node.position.y),
+        );
 
-      setEdges(edges.data);
-      setNodes(newNode);
-    };
+      const edgesResponse = await api.getEdges();
 
-    fetchData();
+      setEdges(edgesResponse.data);
+      setNodes(newNodes);
+    } catch (error) {
+      console.error("Error loading data:", error);
+    }
   }, []);
+
+  useEffect(() => {
+    loadData();
+  }, [loadData]);
 
   const onNodesChange = useCallback(
     (
@@ -59,13 +70,21 @@ const Mindmap = () => {
   );
 
   const onNodesDelete = useCallback(
-    async (nodes: INodeFlow[]) => {
-      for (const node of nodes) {
-        await api.deleteNode(node.id);
+    async (nodesToDelete: INodeFlow[]) => {
+      try {
+        for (const node of nodesToDelete) {
+          await api.deleteNode(node.id);
+        }
+
+        // Recarregar todos os dados após deletar
+        await loadData();
+      } catch (error) {
+        console.error("Error deleting nodes:", error);
+        toast.error("Failed to delete nodes");
       }
     },
-    []
-  )
+    [loadData],
+  );
 
   const onNodeDragStop = useCallback(
     async (_event: React.MouseEvent, node: INodeFlow) => {
@@ -82,10 +101,17 @@ const Mindmap = () => {
 
   const onConnect = useCallback(
     async (params: any) => {
-      await api.createEdge(params);
-      setEdges((edgesSnapshot) => addEdge(params, edgesSnapshot));
+      try {
+        await api.createEdge(params);
+
+        // Recarregar todos os dados após criar
+        await loadData();
+      } catch (error) {
+        console.error("Error creating edge:", error);
+        toast.error("Failed to create edge");
+      }
     },
-    [],
+    [loadData],
   );
 
   const onReconnectStart = useCallback(
@@ -123,11 +149,15 @@ const Mindmap = () => {
 
   const onEdgeDoubleClick = useCallback(
     async (_event: React.MouseEvent, edge: IEdge) => {
-      await api.deleteEdge(edge);
-      const newEdges = edges.filter((ed) => ed != edge);
-      setEdges(newEdges);
+      try {
+        await api.deleteEdge(edge);
+        await loadData();
+      } catch (error) {
+        console.error("Error deleting edge:", error);
+        toast.error("Failed to delete edge");
+      }
     },
-    [],
+    [loadData],
   );
 
   const openNode = useCallback(
@@ -136,6 +166,23 @@ const Mindmap = () => {
     },
     [],
   );
+
+  const createNode = async () => {
+    try {
+      await api.createNode(newNode);
+
+      toast("Node has been created", {
+        position: "top-center",
+        icon: <BiCheck />,
+      });
+
+      await loadData();
+      setNewNode("");
+    } catch (error) {
+      console.error("Error creating node:", error);
+      toast.error("Failed to create node");
+    }
+  };
 
   return (
     <ReactFlow
@@ -158,12 +205,17 @@ const Mindmap = () => {
         <CreateAction
           newNode={newNode}
           setNewNode={setNewNode}
-          setNodes={setNodes}
+          action={createNode}
         />
       </Panel>
       <Background variant={BackgroundVariant.Dots} className="opacity-50" />
       <Controls />
-      <MiniMap />
+      <MiniMap
+        nodeColor="#4f46e5"
+        maskColor="rgba(0, 0, 0, 0.2)"
+        pannable
+        zoomable
+      />
     </ReactFlow>
   );
 };

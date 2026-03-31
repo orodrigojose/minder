@@ -15,6 +15,7 @@ export interface INodeFlow {
   data: {
     label: string;
   };
+  type?: string;
 }
 
 export interface IEdge {
