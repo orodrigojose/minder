@@ -1,10 +1,5 @@
 import { RiMindMap } from "react-icons/ri";
-import {
-  MdFolderCopy,
-  MdSettings,
-  MdCardMembership,
-  MdBookOnline,
-} from "react-icons/md";
+import { MdSettings, MdBookOnline } from "react-icons/md";
 import { Link } from "react-router-dom";
 
 const SideActions = () => {
@@ -13,8 +8,8 @@ const SideActions = () => {
     { target: "/minder", icon: <RiMindMap />, label: "Mindmap" },
   ];
   return (
-    <div className="flex flex-col items-center justify-between p-2 gap-4 text-2xl bg-neutral-900 text-gray-100 shadow-xl">
-      <main className="flex flex-col items-center justify-center p-2 gap-4">
+    <div className="flex flex-col items-center justify-between py-4 p-1 gap-4 text-2xl bg-neutral-900 text-gray-100 shadow-xl">
+      <main className="flex flex-col items-center justify-center gap-4">
         {actions.map((action, key) => (
           <Link
             to={action.target}
@@ -23,7 +18,7 @@ const SideActions = () => {
             key={key}
           >
             {action.icon}
-            <span className="text-[10pt] font-mono text-pretty text-gray-300">
+            <span className="text-[8pt] font-mono px-2 text-pretty text-gray-300">
               {action.label}
             </span>
           </Link>

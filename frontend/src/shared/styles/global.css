@@ -6,7 +6,7 @@
 }
 
 .milkdown .editor {
-  line-height: 1.5; /* Ajusta o alinhamento vertical do cursor */
+  line-height: 1.5;
   tab-size: 4;
   caret-color: transparent;
 }

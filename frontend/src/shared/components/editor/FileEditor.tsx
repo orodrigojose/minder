@@ -1,7 +1,7 @@
 import { Crepe } from "@milkdown/crepe";
 import { Milkdown, MilkdownProvider, useEditor } from "@milkdown/react";
 import { getMarkdown, replaceAll } from "@milkdown/utils";
-import { getNodeContent, updateFile } from "../utils/api";
+import { getNodeContent, updateFile } from "../../utils/api";
 import { editorViewOptionsCtx } from "@milkdown/kit/core";
 import { useState, useEffect, useRef } from "react";
 
@@ -88,7 +88,18 @@ export const FileEditor = ({
   return (
     <div className="w-full h-full bg-[#1a1a1a]">
       <MilkdownProvider>
-        <div className="w-full h-full px-10 py-4 overflow-y-auto">
+        <div
+          className="w-full h-full px-10 py-4
+           overflow-y-auto
+          [&::-webkit-scrollbar]:w-2
+  [&::-webkit-scrollbar-track]:rounded-none
+  [&::-webkit-scrollbar-track]:bg-gray-100
+  [&::-webkit-scrollbar-thumb]:rounded-none
+  [&::-webkit-scrollbar-thumb]:bg-gray-300
+  dark:[&::-webkit-scrollbar-track]:bg-neutral-700
+  dark:[&::-webkit-scrollbar-thumb]:bg-neutral-500
+        "
+        >
           <CrepeEditor initialContent={data} onSave={handleSave} />
         </div>
       </MilkdownProvider>
