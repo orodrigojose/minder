@@ -1,9 +1,9 @@
 import { Crepe } from "@milkdown/crepe";
 import { Milkdown, MilkdownProvider, useEditor } from "@milkdown/react";
 import { getMarkdown, replaceAll } from "@milkdown/utils";
-import { useState, useEffect, useRef } from "react";
 import { getNodeContent, updateFile } from "../utils/api";
 import { editorViewOptionsCtx } from "@milkdown/kit/core";
+import { useState, useEffect, useRef } from "react";
 
 interface CrepeEditorProps {
   initialContent: string;
@@ -63,9 +63,15 @@ const CrepeEditor = ({ initialContent, onSave }: CrepeEditorProps) => {
   return <Milkdown />;
 };
 
-export const FileEditor = ({ id }: { id: string }) => {
+export const FileEditor = ({
+  id,
+  setLoading,
+}: {
+  id: string;
+  loading?: boolean;
+  setLoading: (state: boolean) => void;
+}) => {
   const [data, setData] = useState("");
-  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     const fetchData = async () => {
@@ -79,12 +85,10 @@ export const FileEditor = ({ id }: { id: string }) => {
 
   const handleSave = async (content: string) => await updateFile(id, content);
 
-  if (loading) return <div>Loading editor content...</div>;
-
   return (
-    <div className="w-full h-screen bg-[#1a1a1a]">
+    <div className="w-full h-full bg-[#1a1a1a]">
       <MilkdownProvider>
-        <div className="w-full h-screen px-10 py-4 overflow-y-auto">
+        <div className="w-full h-full px-10 py-4 overflow-y-auto">
           <CrepeEditor initialContent={data} onSave={handleSave} />
         </div>
       </MilkdownProvider>

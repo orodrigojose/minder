@@ -1,5 +1,5 @@
 "use client";
-import Home from "./shared/components/Home";
+import Home from "./shared/pages/Home";
 
 export default function App() {
   return (
