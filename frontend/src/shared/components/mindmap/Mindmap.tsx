@@ -201,6 +201,7 @@ const Mindmap = () => {
       onReconnectEnd={onReconnectEnd}
       onConnect={onConnect}
       colorMode="dark"
+      // proOptions={{ hideAttribution: true }}
       fitView
     >
       <Panel position="top-right">
@@ -211,9 +212,20 @@ const Mindmap = () => {
         />
       </Panel>
       <Background variant={BackgroundVariant.Dots} className="opacity-50" />
-      <Controls />
+      <Controls
+        showInteractive={false}
+        className="bg-[#1e1e1e] border border-white/10 rounded-lg p-1 shadow-2xl fill-white"
+        style={{
+          display: "flex",
+          flexDirection: "row",
+          bottom: "20px",
+          left: "20px",
+        }}
+      />
+
       <MiniMap
-        nodeColor="#4f46e5"
+        className="!bg-[#1e1e1e] !border !border-white/10 !rounded-lg"
+        nodeColor="#9333ea"
         maskColor="rgba(0, 0, 0, 0.2)"
         pannable
         zoomable
