@@ -29,7 +29,6 @@ const Mindmap = () => {
   const [nodes, setNodes] = useState(initialNodes);
   const [edges, setEdges] = useState(initialEdges);
   const [newNode, setNewNode] = useState("");
-
   const edgeReconnectSuccessful = useRef(true);
   const navigate = useNavigate();
 
@@ -171,7 +170,7 @@ const Mindmap = () => {
 
   const createNode = async () => {
     try {
-      await api.createNode(newNode);
+      await api.createNode(newNode, nodes);
 
       toast("Node has been created", {
         position: "top-center",

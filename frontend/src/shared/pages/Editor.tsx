@@ -1,4 +1,4 @@
-import { useNavigate, useParams } from "react-router-dom";
+import { useParams } from "react-router-dom";
 import FileEditor from "../components/editor/FileEditor";
 import { useEffect, useState } from "react";
 import Navbar from "../components/editor/Navbar";
@@ -9,14 +9,12 @@ import { CiWarning } from "react-icons/ci";
 const Editor = () => {
   const [loading, setLoading] = useState(true);
   const { id } = useParams();
-  const navigate = useNavigate();
 
   useEffect(() => {
     if (id == undefined) {
       toast("Cannot find node", {
         icon: <CiWarning />,
       });
-      navigate("/", { replace: true });
     }
   }, []);
 

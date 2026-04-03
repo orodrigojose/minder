@@ -89,16 +89,16 @@ export const FileEditor = ({
     <div className="w-full h-full bg-[#1a1a1a]">
       <MilkdownProvider>
         <div
-          className="w-full h-full px-10 py-4
-           overflow-y-auto
-          [&::-webkit-scrollbar]:w-2
-  [&::-webkit-scrollbar-track]:rounded-none
-  [&::-webkit-scrollbar-track]:bg-gray-100
-  [&::-webkit-scrollbar-thumb]:rounded-none
-  [&::-webkit-scrollbar-thumb]:bg-gray-300
-  dark:[&::-webkit-scrollbar-track]:bg-neutral-700
-  dark:[&::-webkit-scrollbar-thumb]:bg-neutral-500
-        "
+          className="
+            w-full h-full px-10 py-4 overflow-y-auto
+            [&::-webkit-scrollbar]:w-2
+            [&::-webkit-scrollbar-track]:rounded-none
+          [&::-webkit-scrollbar-track]:bg-gray-100
+            [&::-webkit-scrollbar-thumb]:rounded-none
+          [&::-webkit-scrollbar-thumb]:bg-gray-300
+          dark:[&::-webkit-scrollbar-track]:bg-neutral-700
+          dark:[&::-webkit-scrollbar-thumb]:bg-neutral-500
+          "
         >
           <CrepeEditor initialContent={data} onSave={handleSave} />
         </div>

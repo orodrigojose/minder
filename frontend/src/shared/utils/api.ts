@@ -1,4 +1,4 @@
-import type { IEdge } from "../types/types";
+import type { IEdge, INodeFlow } from "../types/types";
 
 const BASE_URL = import.meta.env.VITE_API_URL;
 
@@ -26,10 +26,10 @@ const updateNode = async (id: string, x: number, y: number) => {
   return await response.json();
 };
 
-const createNode = async (nodeName: string) => {
+const createNode = async (nodeName: string, nodes: INodeFlow[]) => {
   const node = {
-    x: 100 + (Math.random() * 100 - 50),
-    y: 100 + (Math.random() * 100 - 50),
+    x: nodes.length > 0 ? nodes[nodes.length - 1].position.x + (Math.random() * 100 - 20) : (Math.random() * 100 - 50),
+    y: nodes.length > 0 ? nodes[nodes.length - 1].position.y + (Math.random() * 100 - 20) : (Math.random() * 100 - 50),
     file: `${nodeName}.md`,
   };
 
@@ -45,11 +45,9 @@ const createNode = async (nodeName: string) => {
 };
 
 const deleteNode = async (id: string) => {
-  const result = await fetch(`${BASE_URL}/node/delete/${id}`, {
+  const _result = await fetch(`${BASE_URL}/node/delete/${id}`, {
     method: "DELETE",
   });
-
-  console.log(result);
 };
 
 const getEdges = async () => {
@@ -83,9 +81,9 @@ const deleteEdge = async (edge: IEdge) => {
 const updateFile = async (id: string, data: string) => {
   await fetch(`${BASE_URL}/file/update/${id}`, {
     method: "PUT",
-    body: data
+    body: data,
   });
-}
+};
 
 export {
   getEdges,
@@ -96,5 +94,5 @@ export {
   updateNode,
   createNode,
   deleteNode,
-  updateFile
+  updateFile,
 };
