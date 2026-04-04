@@ -45,7 +45,7 @@ const createNode = async (nodeName: string, nodes: INodeFlow[]) => {
 };
 
 const deleteNode = async (id: string) => {
-  const _result = await fetch(`${BASE_URL}/node/delete/${id}`, {
+  await fetch(`${BASE_URL}/node/delete/${id}`, {
     method: "DELETE",
   });
 };

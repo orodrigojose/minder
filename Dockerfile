@@ -8,7 +8,7 @@ COPY frontend/ ./
 RUN npm run build
 
 # --- ETAPA 2: Build do Spring Boot (Backend) ---
-FROM maven:3.9-eclipse-temurin-17 AS backend-builder
+FROM maven:3.9-eclipse-temurin-21 AS backend-builder
 WORKDIR /build-backend
 
 # 1. Copia o pom e baixa dependências (cache eficiente)
@@ -29,16 +29,16 @@ RUN mvn clean package -DskipTests
 FROM eclipse-temurin:17-jre-alpine
 WORKDIR /app
 
-# Criamos um volume para o H2 e para os seus arquivos .md não sumirem
-VOLUME /data
+# Criamos um volume para o seu workspace
+VOLUME /workspace
 
 # Copia apenas o JAR final da etapa de build
 COPY --from=backend-builder /build-backend/target/*.jar app.jar
 
 # Configurações via Environment Variables
-# Ajuste 'meu_banco' para o nome que desejar
-ENV SPRING_DATASOURCE_URL=jdbc:h2:file:/data/db_editor;DB_CLOSE_DELAY=-1
-ENV APP_WORKSPACE=/data/arquivos_md
+# O H2 será salvo na pasta .minder dentro do seu workspace
+ENV SPRING_DATASOURCE_URL=jdbc:h2:file:/workspace/.minder/minder;DB_CLOSE_DELAY=-1
+ENV MINDER_WORKSPACE=/workspace
 
 EXPOSE 8080
 

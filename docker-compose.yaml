@@ -4,5 +4,5 @@ services:
     ports:
       - "8080:8080"
     volumes:
-      - ./meu-workspace:/app/data  # Aqui seus MDs e DB ficam salvos no seu PC
+      - ${MINDER_WORKSPACE_PATH:-./workspace}:/workspace
     restart: always
