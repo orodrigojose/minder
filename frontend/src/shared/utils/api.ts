@@ -4,7 +4,6 @@ const BASE_URL = import.meta.env.VITE_API_URL;
 
 const getNodeContent = async (id: string) => {
   const response = await fetch(`${BASE_URL}/node/file/${id}`);
-
   return await response.json();
 };
 
@@ -28,8 +27,14 @@ const updateNode = async (id: string, x: number, y: number) => {
 
 const createNode = async (nodeName: string, nodes: INodeFlow[]) => {
   const node = {
-    x: nodes.length > 0 ? nodes[nodes.length - 1].position.x + (Math.random() * 100 - 20) : (Math.random() * 100 - 50),
-    y: nodes.length > 0 ? nodes[nodes.length - 1].position.y + (Math.random() * 100 - 20) : (Math.random() * 100 - 50),
+    x:
+      nodes.length > 0
+        ? nodes[nodes.length - 1].position.x + (Math.random() * 100 - 20)
+        : Math.random() * 100 - 50,
+    y:
+      nodes.length > 0
+        ? nodes[nodes.length - 1].position.y + (Math.random() * 100 - 20)
+        : Math.random() * 100 - 50,
     file: `${nodeName}.md`,
   };
 
@@ -45,9 +50,10 @@ const createNode = async (nodeName: string, nodes: INodeFlow[]) => {
 };
 
 const deleteNode = async (id: string) => {
-  await fetch(`${BASE_URL}/node/delete/${id}`, {
+  const result = await fetch(`${BASE_URL}/node/delete/${id}`, {
     method: "DELETE",
   });
+  return await result.json();
 };
 
 const getEdges = async () => {

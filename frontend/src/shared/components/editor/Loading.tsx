@@ -2,7 +2,7 @@ import { GiStabbedNote } from "react-icons/gi";
 
 const Loading = () => {
   return (
-    <main className="w-full h-screen  bg-neutral-950 flex justify-center items-center text-gray-200">
+    <main className="w-full h-full bg-neutral-950 flex justify-center items-center text-gray-200">
       <div className="w-full h-full flex flex-col items-start p-8 gap-8 transition-all opacity-10">
         <div className="w-1/4 h-4 bg-gray-300 rounded-full animate-pulse"></div>
 

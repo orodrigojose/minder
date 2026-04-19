@@ -20,10 +20,12 @@ import serializerNode from "../../utils/serializerNode";
 import type { IEdge, INode, INodeFlow } from "../../types/types";
 import React, { useState, useCallback, useEffect, useRef } from "react";
 import toast from "react-hot-toast";
-import { BiCheck } from "react-icons/bi";
 
 const initialNodes: Array<INodeFlow> = [];
 const initialEdges: Array<IEdge> = [];
+
+const getErrorMessage = (error: unknown): string =>
+  error instanceof Error ? error.message : "Unexpected error";
 
 const Mindmap = () => {
   const [nodes, setNodes] = useState(initialNodes);
@@ -33,6 +35,8 @@ const Mindmap = () => {
   const navigate = useNavigate();
 
   const loadData = useCallback(async () => {
+    const toastId = toast.loading("Loading nodes...");
+
     try {
       const { data: nodesData } = await api.getNodes();
       const newNodes = nodesData
@@ -46,8 +50,10 @@ const Mindmap = () => {
 
       setEdges(edgesResponse.data);
       setNodes(newNodes);
+      toast.dismiss(toastId);
     } catch (error) {
       console.error("Error loading data:", error);
+      toast.error(getErrorMessage(error), { id: toastId });
     }
   }, []);
 
@@ -71,10 +77,18 @@ const Mindmap = () => {
   const onNodesDelete = useCallback(
     async (nodesToDelete: INodeFlow[]) => {
       try {
-        await Promise.all(nodesToDelete.map((node) => api.deleteNode(node.id)));
+        await Promise.all(
+          nodesToDelete.map(async (node) => {
+            const result = await api.deleteNode(node.id);
+
+            if (result.status !== 200)
+              throw new Error(`Failed to delete #${node.data.label} node.`);
+
+            toast.success(`${node.data.label} node deleted.`);
+          }),
+        );
       } catch (error) {
-        console.error("Error deleting nodes:", error);
-        toast.error("Failed to delete nodes");
+        toast.error(getErrorMessage(error));
         await loadData();
       }
     },
@@ -100,7 +114,6 @@ const Mindmap = () => {
         await api.createEdge(params);
         await loadData();
       } catch (error) {
-        console.error("Error creating edge:", error);
         toast.error("Failed to create edge");
       }
     },
@@ -131,9 +144,8 @@ const Mindmap = () => {
       _handleType: any,
       _connectionState: any,
     ) => {
-      if (!edgeReconnectSuccessful.current) {
+      if (!edgeReconnectSuccessful.current)
         setEdges((eds) => eds.filter((e) => e.id !== edge.id));
-      }
 
       edgeReconnectSuccessful.current = true;
     },
@@ -170,18 +182,16 @@ const Mindmap = () => {
 
   const createNode = async () => {
     try {
+      if (!newNode || newNode == undefined)
+        throw new Error("Please type valid node name!");
       await api.createNode(newNode, nodes);
 
-      toast("Node has been created", {
-        position: "top-center",
-        icon: <BiCheck />,
-      });
+      toast.success("Node has been created");
 
       await loadData();
       setNewNode("");
     } catch (error) {
-      console.error("Error creating node:", error);
-      toast.error("Failed to create node");
+      toast.error(getErrorMessage(error));
     }
   };
 
@@ -224,7 +234,7 @@ const Mindmap = () => {
       />
 
       <MiniMap
-        className="!bg-[#1e1e1e] !border !border-white/10 !rounded-lg"
+        className="bg-[#1e1e1e] border border-white/10 rounded-lg"
         nodeColor="#9333ea"
         maskColor="rgba(0, 0, 0, 0.2)"
         pannable

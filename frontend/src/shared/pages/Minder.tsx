@@ -1,7 +1,7 @@
 import Mindmap from "../components/mindmap/Mindmap";
 import { ReactFlowProvider, useReactFlow } from "@xyflow/react";
 import { useEffect, useState } from "react";
-import FileSearch from "../components/Fzf";
+import FileSearch from "../components/ui/Fzf";
 import { getNodes } from "../utils/api";
 
 function MinderContent() {
@@ -9,9 +9,8 @@ function MinderContent() {
   const [fileList, setFileList] = useState([]);
   const { fitView } = useReactFlow();
 
-  const handleFocus = (id: string) => {
+  const handleFocus = (id: string) =>
     fitView({ nodes: [{ id }], duration: 800, padding: 0.5 });
-  };
 
   useEffect(() => {
     const fetchData = async () => {

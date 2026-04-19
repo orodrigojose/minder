@@ -1,5 +1,5 @@
 import { FaRegStickyNote } from "react-icons/fa";
-import type { INode } from "../types/types";
+import type { INode } from "../../types/types";
 import {
   useState,
   useMemo,
@@ -86,7 +86,7 @@ const FileSearch = ({ files, onSelect, onClose }: FileSearchProps) => {
         </div>
 
         <ul className="max-h-80 overflow-y-auto" ref={listRef}>
-          {results.map((file, index) => {
+          {results.map((file: INode, index: number) => {
             const isSelected = index === selectedIndex;
 
             return (
@@ -100,7 +100,7 @@ const FileSearch = ({ files, onSelect, onClose }: FileSearchProps) => {
                 className={`px-4 py-3 hover:bg-blue-600/20 text-gray-300 hover:text-white cursor-pointer flex items-center justify-baseline gap-3 transition-colors
                 ${
                   isSelected
-                    ? "bg-purple-600/20 text-white"
+                    ? "bg-blue-600/20 text-white"
                     : "text-gray-300 hover:bg-blue-600/20 hover:text-white"
                 }`}
               >
