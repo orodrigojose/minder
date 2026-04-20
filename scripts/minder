@@ -1,0 +1,218 @@
+#!/usr/bin/env bash
+
+set -euo pipefail
+
+INVOCATION_DIR="$(pwd)"
+
+resolve_script_path() {
+	local source_path="${BASH_SOURCE[0]}"
+
+	while [ -h "$source_path" ]; do
+		local script_dir
+		script_dir="$(cd -P "$(dirname "$source_path")" && pwd)"
+		source_path="$(readlink "$source_path")"
+		case "$source_path" in
+			/*) ;;
+			*) source_path="$script_dir/$source_path" ;;
+		esac
+	done
+
+	cd -P "$(dirname "$source_path")" && pwd
+}
+
+SCRIPT_DIR="$(resolve_script_path)"
+ROOT_DIR="$(cd "$SCRIPT_DIR/.." && pwd)"
+cd "$ROOT_DIR"
+
+COMPOSE_FILE="docker-compose.yaml"
+
+if command -v docker >/dev/null 2>&1 && docker compose version >/dev/null 2>&1; then
+	COMPOSE_CMD=(docker compose)
+elif command -v docker-compose >/dev/null 2>&1; then
+	COMPOSE_CMD=(docker-compose)
+else
+	echo "Erro: docker compose nao foi encontrado."
+	echo "Instale Docker Desktop ou Docker Engine com o plugin compose."
+	exit 1
+fi
+
+ensure_env_file() {
+	if [ ! -f .env ] && [ -f .env.example ]; then
+		cp .env.example .env
+		echo "Arquivo .env criado a partir de .env.example"
+	fi
+}
+
+load_env() {
+	if [ -f .env ]; then
+		# shellcheck disable=SC1091
+		set -a
+		source .env
+		set +a
+	fi
+
+	MINDER_PORT="${MINDER_PORT:-8080}"
+	MINDER_WORKSPACE_PATH="${MINDER_WORKSPACE_PATH:-}"
+}
+
+resolve_workspace_host_path() {
+	local workspace_input="$1"
+
+	case "$workspace_input" in
+		"") printf "%s" "$INVOCATION_DIR" ;;
+		.) printf "%s" "$INVOCATION_DIR" ;;
+		/*) printf "%s" "$workspace_input" ;;
+		*) printf "%s" "$INVOCATION_DIR/$workspace_input" ;;
+	esac
+}
+
+ensure_workspace_path() {
+	local workspace_host_path="$1"
+
+	mkdir -p "$workspace_host_path/.minder/database"
+	mkdir -p "$workspace_host_path/.minder/nodes"
+}
+
+run_compose() {
+	MINDER_PORT="$MINDER_PORT" MINDER_WORKSPACE_PATH="$MINDER_WORKSPACE_PATH" "${COMPOSE_CMD[@]}" -f "$COMPOSE_FILE" "$@"
+}
+
+open_app() {
+	local url="http://localhost:${MINDER_PORT}"
+
+	if command -v xdg-open >/dev/null 2>&1; then
+		xdg-open "$url" >/dev/null 2>&1 || true
+	elif command -v open >/dev/null 2>&1; then
+		open "$url" >/dev/null 2>&1 || true
+	elif command -v cmd.exe >/dev/null 2>&1; then
+		cmd.exe /c start "" "$url" >/dev/null 2>&1 || true
+	fi
+
+	echo "Minder: $url"
+}
+
+show_help() {
+	cat <<'EOF'
+Uso:
+  minder <workspace_path>
+	minder
+  minder up [workspace_path]
+  minder restart [workspace_path]
+	minder rebuild [workspace_path]
+  minder down
+  minder logs
+  minder status
+  minder open
+	minder ls [workspace_path]
+
+Exemplos:
+  minder
+  minder ~/Notes
+  minder up ~/Notes
+  minder restart ~/Notes
+	minder rebuild ~/Notes
+  minder ls ~/Notes
+
+Sem path, usa o diretorio atual onde o comando foi executado.
+
+O workspace fica assim:
+  <workspace_path>/.minder/database/Data.db
+  <workspace_path>/.minder/nodes/*.md
+EOF
+}
+
+list_workspace() {
+	local workspace_host_path="$1"
+
+	echo "Workspace host path: $workspace_host_path"
+	echo
+	echo ".minder/database"
+	ls -la "$workspace_host_path/.minder/database" 2>/dev/null || echo "(vazio ou inexistente)"
+	echo
+	echo ".minder/nodes"
+	ls -la "$workspace_host_path/.minder/nodes" 2>/dev/null || echo "(vazio ou inexistente)"
+}
+
+main() {
+	local first_arg="${1:-}"
+	local second_arg="${2:-}"
+	local command="up"
+	local workspace_path=""
+
+	case "$first_arg" in
+		"" )
+			command="up"
+			workspace_path=""
+			;;
+		up|down|restart|rebuild|logs|status|open|ls|help|-h|--help)
+			command="$first_arg"
+			workspace_path="$second_arg"
+			;;
+		*)
+			command="up"
+			workspace_path="$first_arg"
+			;;
+	esac
+
+	case "$command" in
+		up)
+			ensure_env_file
+			load_env
+			MINDER_WORKSPACE_PATH="$(resolve_workspace_host_path "$workspace_path")"
+			ensure_workspace_path "$MINDER_WORKSPACE_PATH"
+			run_compose up -d --force-recreate --remove-orphans
+			echo "Workspace host path: $MINDER_WORKSPACE_PATH"
+			open_app
+			;;
+		restart)
+			ensure_env_file
+			load_env
+			MINDER_WORKSPACE_PATH="$(resolve_workspace_host_path "$workspace_path")"
+			ensure_workspace_path "$MINDER_WORKSPACE_PATH"
+			run_compose down
+			run_compose up -d --force-recreate --remove-orphans
+			echo "Workspace host path: $MINDER_WORKSPACE_PATH"
+			open_app
+			;;
+		rebuild)
+			ensure_env_file
+			load_env
+			MINDER_WORKSPACE_PATH="$(resolve_workspace_host_path "$workspace_path")"
+			ensure_workspace_path "$MINDER_WORKSPACE_PATH"
+			run_compose up -d --build --force-recreate --remove-orphans
+			echo "Workspace host path: $MINDER_WORKSPACE_PATH"
+			open_app
+			;;
+		down)
+			load_env
+			run_compose down
+			;;
+		logs)
+			load_env
+			run_compose logs -f
+			;;
+		status)
+			load_env
+			run_compose ps
+			;;
+		open)
+			load_env
+			open_app
+			;;
+		ls)
+			load_env
+			MINDER_WORKSPACE_PATH="$(resolve_workspace_host_path "$workspace_path")"
+			list_workspace "$MINDER_WORKSPACE_PATH"
+			;;
+		help|-h|--help)
+			show_help
+			;;
+		*)
+			echo "Comando invalido: $command"
+			show_help
+			exit 1
+			;;
+	esac
+}
+
+main "$@"

@@ -2,14 +2,14 @@ package dev.rodrigojose.minder.application.usecases.file;
 
 import java.io.IOException;
 import java.nio.file.Files;
-import java.nio.file.Paths;
-import java.util.UUID;
 import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.nio.file.StandardOpenOption;
+import java.util.UUID;
 
-import org.springframework.stereotype.Service;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.stereotype.Service;
 
 import dev.rodrigojose.minder.adapters.outbound.repositories.NodeRepositoryImpl;
 import dev.rodrigojose.minder.domain.node.Node;
@@ -20,7 +20,7 @@ public class UpdateFile {
   @Autowired
   private NodeRepositoryImpl repository;
 
-  @Value("${minder.workspace:uploads}")
+  @Value("${minder.workspace:./.minder/nodes}")
   private String workspace;
 
   public void execute(UUID id, String data) throws IOException {
@@ -30,7 +30,8 @@ public class UpdateFile {
       throw new NodeNotFoundException("Node not exists!");
     }
 
-    Path path = Paths.get(workspace + "/" + node.getFile());
+    Path path = Paths.get(workspace).resolve(node.getFile());
+    Files.createDirectories(path.getParent());
     Files.writeString(path, data, StandardOpenOption.CREATE, StandardOpenOption.TRUNCATE_EXISTING);
   }
 

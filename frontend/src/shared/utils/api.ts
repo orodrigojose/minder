@@ -53,6 +53,7 @@ const deleteNode = async (id: string) => {
   const result = await fetch(`${BASE_URL}/node/delete/${id}`, {
     method: "DELETE",
   });
+
   return await result.json();
 };
 

@@ -3,12 +3,14 @@ package dev.rodrigojose.minder.application.usecases.file;
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
-import java.nio.file.Paths;
 import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.UUID;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
+
 import dev.rodrigojose.minder.adapters.outbound.repositories.NodeRepositoryImpl;
 import dev.rodrigojose.minder.infrastructure.config.exceptions.NodeNotFoundException;
 
@@ -17,7 +19,7 @@ public class FindByIdFile {
   @Autowired
   private NodeRepositoryImpl repository;
 
-  @Value("${minder.workspace:uploads}")
+  @Value("${minder.workspace:./.minder/nodes}")
   private String workspace;
 
   public String execute(UUID id) throws IOException {
@@ -27,7 +29,7 @@ public class FindByIdFile {
       throw new NodeNotFoundException("Node of file doesnt exists!");
     }
 
-    Path path = Paths.get(workspace + "/" + node.getFile());
+    Path path = Paths.get(workspace).resolve(node.getFile());
 
     String content = new String(Files.readAllBytes(path), StandardCharsets.UTF_8);
     return content;

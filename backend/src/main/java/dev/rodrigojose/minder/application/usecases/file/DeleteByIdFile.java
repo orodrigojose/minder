@@ -10,8 +10,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
-import dev.rodrigojose.minder.domain.node.Node;
 import dev.rodrigojose.minder.adapters.outbound.repositories.NodeRepositoryImpl;
+import dev.rodrigojose.minder.domain.node.Node;
 import dev.rodrigojose.minder.infrastructure.config.exceptions.NodeNotFoundException;
 
 @Service
@@ -19,7 +19,7 @@ public class DeleteByIdFile {
   @Autowired
   private NodeRepositoryImpl repository;
 
-  @Value("${minder.workspace:uploads}")
+  @Value("${minder.workspace:./.minder/nodes}")
   private String workspace;
 
   public void execute(UUID id) throws IOException {
@@ -32,7 +32,7 @@ public class DeleteByIdFile {
       throw new IOException("This Node dont had file associated!");
     }
 
-    Path path = Paths.get(workspace + "/" + node.getFile());
+    Path path = Paths.get(workspace).resolve(node.getFile());
 
     if (Files.exists(path)) {
       Files.delete(path);

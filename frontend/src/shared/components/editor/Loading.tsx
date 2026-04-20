@@ -1,8 +1,6 @@
-import { GiStabbedNote } from "react-icons/gi";
-
 const Loading = () => {
   return (
-    <main className="w-full h-full bg-neutral-950 flex justify-center items-center text-gray-200">
+    <main className="w-full h-screen bg-black flex justify-center items-center text-gray-200">
       <div className="w-full h-full flex flex-col items-start p-8 gap-8 transition-all opacity-10">
         <div className="w-1/4 h-4 bg-gray-300 rounded-full animate-pulse"></div>
 
@@ -27,9 +25,9 @@ const Loading = () => {
           </div>
         </div>
       </div>
-      <div className="flex flex-col items-center gap-4 absolute">
-        <div className="text-9xl animate-pulse transition-all">
-          <GiStabbedNote />
+      <div className="flex flex-col items-center gap-4 absolute brightness-125">
+        <div className="w-1/3 h-1/3 animate-pulse transition-all">
+          <img src="/assets/logo.png" />
         </div>
       </div>
     </main>

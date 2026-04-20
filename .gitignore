@@ -1,0 +1,5 @@
+.env
+.minder/
+workspace/
+backend/target/
+frontend/node_modules/
