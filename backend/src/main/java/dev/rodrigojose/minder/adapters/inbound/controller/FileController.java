@@ -7,12 +7,12 @@ import java.util.UUID;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.CrossOrigin;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.CrossOrigin;
-import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RestController;
 
 import dev.rodrigojose.minder.application.usecases.file.UpdateFile;
 import dev.rodrigojose.minder.infrastructure.StandardResponseDto;
@@ -38,10 +38,7 @@ public class FileController {
       throw new RuntimeException("Please inform an valid content data!");
     }
 
-    System.out.println(data);
-
     updateFile.execute(id, data);
-
     return ResponseEntity.ok(response);
   }
   

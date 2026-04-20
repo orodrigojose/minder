@@ -35,7 +35,16 @@ public class NodeRepositoryImpl implements NodeRepository {
   @Override
   public Node findById(UUID id) {
     Optional<JpaNodeEntity> nodeEntity = this.repository.findById(id);
-    return nodeEntity.map(entity -> new Node(entity.getId(), entity.getFile(), entity.getX(), entity.getY(), entity.getCreated_at()))
+    return nodeEntity
+        .map(entity -> new Node(entity.getId(), entity.getFile(), entity.getX(), entity.getY(), entity.getCreated_at()))
+        .orElse(null);
+  }
+
+  @Override
+  public Node findByFile(String file) {
+    Optional<JpaNodeEntity> nodeEntity = this.repository.findByFile(file);
+    return nodeEntity
+        .map(entity -> new Node(entity.getId(), entity.getFile(), entity.getX(), entity.getY(), entity.getCreated_at()))
         .orElse(null);
   }
 

@@ -19,7 +19,7 @@ const Editor = () => {
         icon: <CiWarning />,
       });
 
-      navigate("/minder");
+      navigate("/");
     }
   }, []);
 

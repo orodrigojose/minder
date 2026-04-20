@@ -18,6 +18,12 @@ public class CreateNode {
   private CreateFile createFile;
 
   public Node execute(Node node) throws NodeNotFoundException, IOException, RuntimeException {
+    Node exists = repository.findByFile(node.getFile());
+
+    if (exists != null) {
+      throw new RuntimeException("Node has been created, please use another filename");
+    }
+
     node = repository.save(node);
     createFile.execute("", node.getFile());
 

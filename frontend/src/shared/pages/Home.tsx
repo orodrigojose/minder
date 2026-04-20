@@ -1,4 +1,3 @@
-import { GiStabbedNote } from "react-icons/gi";
 import { MdBookOnline } from "react-icons/md";
 import { RiMindMap } from "react-icons/ri";
 import { Link } from "react-router-dom";
@@ -11,8 +10,8 @@ const Home = () => {
   return (
     <section className="w-full h-full flex flex-col justify-center items-center gap-8 bg-neutral-950 text-gray-200">
       <div className="flex items-center ">
-        <div className="text-9xl transition-all">
-          <GiStabbedNote />
+        <div className="transition-all w-54 flex items-center jusitfy-center">
+          <img src="/assets/logo.png" className=""/>
         </div>
         <h1 className="text-8xl font-mono">Minder</h1>
       </div>

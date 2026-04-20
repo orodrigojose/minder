@@ -184,10 +184,12 @@ const Mindmap = () => {
     try {
       if (!newNode || newNode == undefined)
         throw new Error("Please type valid node name!");
-      await api.createNode(newNode, nodes);
+
+      const result = await api.createNode(newNode, nodes);
+
+      if (result.status != 201) throw new Error(result.message);
 
       toast.success("Node has been created");
-
       await loadData();
       setNewNode("");
     } catch (error) {

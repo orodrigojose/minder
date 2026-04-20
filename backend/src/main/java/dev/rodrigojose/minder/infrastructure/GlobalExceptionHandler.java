@@ -25,7 +25,7 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
   private ResponseEntity<StandardResponseDto> ioExceptionHandler(IOException exception) {
     StandardResponseDto threatResponse = new StandardResponseDto(LocalDateTime.now(), 
         HttpStatus.BAD_REQUEST.value(),
-        "Erro ao processar arquivo: " + exception.getMessage(), null);
+        "Error to processing file: " + exception.getMessage(), null);
 
     return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(threatResponse);
   }
@@ -34,7 +34,7 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
   private ResponseEntity<StandardResponseDto> runtimeExceptionHandler(RuntimeException exception) {
     StandardResponseDto threatResponse = new StandardResponseDto(LocalDateTime.now(),
         HttpStatus.INTERNAL_SERVER_ERROR.value(),
-        "Erro interno do servidor: " + exception.getMessage(), null);
+        "Server Error: " + exception.getMessage(), null);
 
     return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(threatResponse);
   }
