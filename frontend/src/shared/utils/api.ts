@@ -86,10 +86,16 @@ const deleteEdge = async (edge: IEdge) => {
 };
 
 const updateFile = async (id: string, data: string) => {
-  await fetch(`${BASE_URL}/file/update/${id}`, {
+  const response = await fetch(`${BASE_URL}/file/update/${id}`, {
     method: "PUT",
+    headers: {
+      "Content-Type": "text/plain; charset=utf-8",
+      Accept: "application/json",
+    },
     body: data,
   });
+
+  return await response.json();
 };
 
 export {

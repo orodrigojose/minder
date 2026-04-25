@@ -5,6 +5,11 @@ import { getNodeContent, updateFile } from "../../utils/api";
 import { editorViewOptionsCtx } from "@milkdown/kit/core";
 import { useState, useEffect, useRef } from "react";
 
+import { math } from "@milkdown/plugin-math";
+import { diagram } from "@milkdown/plugin-diagram";
+import toast from "react-hot-toast";
+import { useNavigate } from "react-router-dom";
+
 interface CrepeEditorProps {
   initialContent: string;
   onSave: (content: string) => void;
@@ -15,7 +20,17 @@ const CrepeEditor = ({ initialContent, onSave }: CrepeEditorProps) => {
   const saveTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
   useEditor((root) => {
-    const crepe = new Crepe({ root, defaultValue: initialContent });
+    const crepe = new Crepe({
+      root,
+      defaultValue: initialContent,
+      features: {
+        "block-edit": true,
+        table: true,
+        "link-tooltip": true,
+      },
+    });
+
+    crepe.editor.use(math as any).use(diagram as any);
 
     crepe.editor.config((ctx) => {
       ctx.update(editorViewOptionsCtx, (prev) => ({
@@ -72,18 +87,27 @@ export const FileEditor = ({
   setLoading: (state: boolean) => void;
 }) => {
   const [data, setData] = useState("");
+  const navigate = useNavigate();
 
   useEffect(() => {
     const fetchData = async () => {
-      const { data } = await getNodeContent(id);
-      setData(data);
-      setLoading(false);
+      const response = await getNodeContent(id);
+
+      if (response.status != 200) {
+        toast.error(response.message);
+        navigate("/");
+      } else {
+        setData(response.data);
+        setLoading(false);
+      }
     };
 
     fetchData();
   }, []);
 
-  const handleSave = async (content: string) => await updateFile(id, content);
+  const handleSave = async (content: string) => {
+    await updateFile(id, content ? content : "");
+  };
 
   return (
     <div className="w-full h-full bg-[#1a1a1a]">

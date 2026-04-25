@@ -10,10 +10,12 @@
     "preview": "vite preview"
   },
   "dependencies": {
-    "@milkdown/crepe": "^7.19.0",
-    "@milkdown/kit": "^7.19.0",
-    "@milkdown/react": "^7.19.0",
-    "@milkdown/theme-nord": "^7.19.0",
+    "@milkdown/crepe": "^7.20.0",
+    "@milkdown/kit": "^7.20.0",
+    "@milkdown/plugin-diagram": "^7.7.0",
+    "@milkdown/plugin-math": "^7.5.9",
+    "@milkdown/react": "^7.20.0",
+    "@milkdown/theme-nord": "^7.20.0",
     "@tailwindcss/vite": "^4.2.1",
     "@xyflow/react": "^12.10.1",
     "dotenv": "^17.3.1",
