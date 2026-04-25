@@ -36,9 +36,6 @@ public class DeleteByIdFile {
 
     if (Files.exists(path)) {
       Files.delete(path);
-    } else {
-      System.out.println("Deu red");
-      throw new IOException("'" + node.getFile() + "' file not found!");
     }
   }
 }

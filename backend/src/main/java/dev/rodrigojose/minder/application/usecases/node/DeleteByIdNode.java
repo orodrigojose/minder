@@ -1,9 +1,6 @@
 package dev.rodrigojose.minder.application.usecases.node;
 
 import java.io.IOException;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.Paths;
 import java.util.UUID;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -30,6 +27,7 @@ public class DeleteByIdNode {
 
   public void execute(UUID id) throws IOException {
     Node node = repository.findById(id);
+
     if (node == null) {
       throw new NodeNotFoundException("Node id=" + id + " not found!");
     }

@@ -19,19 +19,18 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import dev.rodrigojose.minder.application.usecases.edge.DeleteEdgeByNodeId;
-import dev.rodrigojose.minder.application.usecases.file.CreateFile;
-import dev.rodrigojose.minder.application.usecases.file.DeleteByIdFile;
 import dev.rodrigojose.minder.application.usecases.file.FindByIdFile;
 import dev.rodrigojose.minder.application.usecases.node.CreateNode;
 import dev.rodrigojose.minder.application.usecases.node.DeleteByIdNode;
 import dev.rodrigojose.minder.application.usecases.node.FindByIdNode;
 import dev.rodrigojose.minder.application.usecases.node.GetAllNode;
 import dev.rodrigojose.minder.application.usecases.node.UpdateNode;
+import dev.rodrigojose.minder.application.usecases.node.VerifyIntegrityNode;
 import dev.rodrigojose.minder.domain.node.Node;
 import dev.rodrigojose.minder.domain.node.NodeUpdateDto;
 import dev.rodrigojose.minder.infrastructure.StandardResponseDto;
 import dev.rodrigojose.minder.infrastructure.config.exceptions.NodeNotFoundException;
+import org.springframework.web.bind.annotation.RequestParam;
 
 @CrossOrigin
 @RestController
@@ -49,6 +48,8 @@ public class NodeController {
   private DeleteByIdNode deleteByIdNode;
   @Autowired
   private FindByIdFile findByIdFile;
+  @Autowired
+  private VerifyIntegrityNode verifyIntegrityNode;
 
   @GetMapping("/")
   public ResponseEntity<StandardResponseDto<List<Node>>> getAll() {
@@ -77,7 +78,7 @@ public class NodeController {
 
   @CrossOrigin
   @GetMapping("/file/{id}")
-  public ResponseEntity<StandardResponseDto> getFileContent( @PathVariable UUID id)
+  public ResponseEntity<StandardResponseDto> getFileContent(@PathVariable UUID id)
       throws IOException {
     String content = findByIdFile.execute(id);
 
@@ -128,6 +129,21 @@ public class NodeController {
         HttpStatus.OK.value(),
         "Node updated.",
         node);
+
+    return ResponseEntity.ok(response);
+  }
+
+  @CrossOrigin
+  @GetMapping("/verify-integrity")
+  public  ResponseEntity<StandardResponseDto> getMethodName() throws IOException {
+    List<Node> corruptedNodes = verifyIntegrityNode.execute();
+
+
+    StandardResponseDto response = new StandardResponseDto<List<Node>>(
+        LocalDateTime.now(),
+        HttpStatus.OK.value(),
+        "Node updated.",
+        corruptedNodes);
 
     return ResponseEntity.ok(response);
   }

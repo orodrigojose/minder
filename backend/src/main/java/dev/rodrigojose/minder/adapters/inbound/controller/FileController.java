@@ -26,19 +26,16 @@ public class FileController {
   private UpdateFile updateFile;
   
   @PutMapping("/update/{id}")
-  public ResponseEntity<StandardResponseDto> update(@PathVariable UUID id, @RequestBody String data) throws IOException {
-    StandardResponseDto response = new StandardResponseDto<>(
+  public ResponseEntity<StandardResponseDto<Void>> update(@PathVariable UUID id, @RequestBody(required = false) String data) throws IOException {
+    StandardResponseDto<Void> response = new StandardResponseDto<>(
       LocalDateTime.now(),
       HttpStatus.OK.value(),
       "Content Updated!",
       null
     );
 
-    if (data == null) {
-      throw new RuntimeException("Please inform an valid content data!");
-    }
-
-    updateFile.execute(id, data);
+    String content = data == null ? "" : data;
+    updateFile.execute(id, content);
     return ResponseEntity.ok(response);
   }
   
