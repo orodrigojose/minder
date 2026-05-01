@@ -7,7 +7,7 @@ const Layout = () => {
   return (
     <section className="w-full h-full flex min-w-0 overflow-hidden">
       <Sidebar />
-      <main className="w-full h-full min-w-0">
+      <main className="w-full h-screen min-w-0 bg-neutral-900">
         <Toaster
           position="bottom-center"
           reverseOrder={false}

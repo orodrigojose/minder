@@ -1,4 +1,5 @@
 import { createBrowserRouter, RouterProvider } from "react-router";
+import Settings from "./shared/pages/Settings.tsx";
 import Layout from "./shared/layouts/Layout.tsx";
 import Editor from "./shared/pages/Editor.tsx";
 import Minder from "./shared/pages/Minder.tsx";
@@ -14,6 +15,7 @@ const router = createBrowserRouter([
     children: [
       { index: true, element: <App /> },
       { path: "/minder", element: <Minder /> },
+      { path: "/settings", element: <Settings /> },
       { path: "/editor/:id?", element: <Editor /> },
     ],
   },

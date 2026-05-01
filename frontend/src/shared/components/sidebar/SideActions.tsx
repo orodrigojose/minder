@@ -39,7 +39,13 @@ const SideActions = () => {
         ))}
       </main>
       <footer>
-        <MdSettings />
+        <Link
+          to="/settings"
+          className="flex flex-col justify-center items-center gap-2 hover:brightness-110 hover:scale-105 transition-all"
+          viewTransition
+        >
+          <MdSettings />
+        </Link>
       </footer>
     </div>
   );
