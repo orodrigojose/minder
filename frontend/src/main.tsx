@@ -5,8 +5,6 @@ import Minder from "./shared/pages/Minder.tsx";
 import { createRoot } from "react-dom/client";
 import App from "./App.tsx";
 
-import "@milkdown/crepe/theme/common/style.css";
-import "@milkdown/crepe/theme/frame-dark.css";
 import "./shared/styles/global.css";
 
 const router = createBrowserRouter([
