@@ -1,82 +1,11 @@
-import { Crepe } from "@milkdown/crepe";
-import { Milkdown, MilkdownProvider, useEditor } from "@milkdown/react";
-import { getMarkdown, replaceAll } from "@milkdown/utils";
-import { getNodeContent, updateFile } from "../../utils/api";
-import { editorViewOptionsCtx } from "@milkdown/kit/core";
-import { useState, useEffect, useRef } from "react";
-
-import { math } from "@milkdown/plugin-math";
-import { diagram } from "@milkdown/plugin-diagram";
-import toast from "react-hot-toast";
+import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
+import { getNodeContent, updateFile } from "../../utils/api";
 
-interface CrepeEditorProps {
-  initialContent: string;
-  onSave: (content: string) => void;
-}
+import CrepeEditor from "./CrepeEditor";
+import { MilkdownProvider } from "@milkdown/react";
 
-const CrepeEditor = ({ initialContent, onSave }: CrepeEditorProps) => {
-  const crepeRef = useRef<Crepe | null>(null);
-  const saveTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
-
-  useEditor((root) => {
-    const crepe = new Crepe({
-      root,
-      defaultValue: initialContent,
-      features: {
-        "block-edit": true,
-        table: true,
-        "link-tooltip": true,
-      },
-    });
-
-    crepe.editor.use(math as any).use(diagram as any);
-
-    crepe.editor.config((ctx) => {
-      ctx.update(editorViewOptionsCtx, (prev) => ({
-        ...prev,
-        handleDOMEvents: {
-          ...prev.handleDOMEvents,
-          keydown: (_view, event) => {
-            if ((event.ctrlKey || event.metaKey) && event.key === "s") {
-              event.preventDefault();
-              const markdown = getMarkdown()(ctx);
-
-              onSave(markdown);
-              return true;
-            }
-            return false;
-          },
-        },
-      }));
-    });
-
-    crepe.on((listener) => {
-      listener.markdownUpdated((_ctx, markdown) => {
-        if (saveTimeoutRef.current) clearTimeout(saveTimeoutRef.current);
-
-        saveTimeoutRef.current = setTimeout(() => {
-          onSave(markdown);
-        }, 3000);
-      });
-    });
-
-    crepeRef.current = crepe;
-    return crepe;
-  });
-
-  useEffect(() => {
-    const editor = crepeRef.current?.editor;
-
-    if (editor && initialContent) {
-      editor.action((ctx) => {
-        replaceAll(initialContent)(ctx);
-      });
-    }
-  }, [initialContent]);
-
-  return <Milkdown />;
-};
+import toast from "react-hot-toast";
 
 export const FileEditor = ({
   id,
