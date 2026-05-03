@@ -15,33 +15,57 @@ public class CreateSettings {
   public Settings execute() {
     JpaSettingsEntity defaultSettings = new JpaSettingsEntity();
 
-    defaultSettings.setTheme("classic-dark");
-    defaultSettings.setFontSize("10pt");
-    defaultSettings.setSlashCommands(true);
+    defaultSettings.setTheme("classic");
+    defaultSettings.setFontSize(16);
+    defaultSettings.setPlaceholder("Type / to see commands...");
+
+    defaultSettings.setTopBar(false);
+    defaultSettings.setToolBar(false);
+
+    defaultSettings.setTitleText("Minder");
+    defaultSettings.setWelcomeText("Welcome to the Minder Editor");
 
     JpaSettingsEntity saved = repository.save(defaultSettings);
 
     return new Settings(
         saved.getId(),
-        saved.getFontSize(),
         saved.getTheme(),
-        saved.getSlashCommands());
+        saved.getFontSize(),
+        saved.getPlaceholder(),
+
+        saved.getTopBar(),
+        saved.getToolBar(),
+
+        saved.getTitleText(),
+        saved.getWelcomeText());
   }
 
   public Settings execute(Settings userSettings) {
 
     JpaSettingsEntity defaultSettings = new JpaSettingsEntity();
 
-    defaultSettings.setTheme(userSettings.getTheme());
-    defaultSettings.setFontSize(userSettings.getFontSize());
-    defaultSettings.setSlashCommands(userSettings.getSlashCommands());
+    defaultSettings.setTheme("classic");
+    defaultSettings.setFontSize(16);
+    defaultSettings.setPlaceholder("Type / to see commands...");
+
+    defaultSettings.setTopBar(false);
+    defaultSettings.setToolBar(false);
+
+    defaultSettings.setTitleText("Minder");
+    defaultSettings.setWelcomeText("Welcome to the Minder Editor");
 
     JpaSettingsEntity saved = repository.save(defaultSettings);
 
     return new Settings(
         saved.getId(),
-        saved.getFontSize(),
         saved.getTheme(),
-        saved.getSlashCommands());
+        saved.getFontSize(),
+        saved.getPlaceholder(),
+
+        saved.getTopBar(),
+        saved.getToolBar(),
+
+        saved.getTitleText(),
+        saved.getWelcomeText());
   }
 }

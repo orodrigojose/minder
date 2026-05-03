@@ -30,7 +30,6 @@ import dev.rodrigojose.minder.domain.node.Node;
 import dev.rodrigojose.minder.domain.node.NodeUpdateDto;
 import dev.rodrigojose.minder.infrastructure.StandardResponseDto;
 import dev.rodrigojose.minder.infrastructure.config.exceptions.NodeNotFoundException;
-import org.springframework.web.bind.annotation.RequestParam;
 
 @CrossOrigin
 @RestController
@@ -64,10 +63,10 @@ public class NodeController {
   }
 
   @GetMapping("/{id}")
-  public ResponseEntity<StandardResponseDto> findById(@PathVariable UUID id) {
+  public ResponseEntity<StandardResponseDto<Optional<Node>>> findById(@PathVariable UUID id) {
     Optional<Node> node = findByIdNodeUseCase.execute(id);
 
-    StandardResponseDto response = new StandardResponseDto<Optional<Node>>(
+    StandardResponseDto<Optional<Node>> response = new StandardResponseDto<>(
         LocalDateTime.now(),
         HttpStatus.OK.value(),
         "Node created!",
@@ -82,7 +81,7 @@ public class NodeController {
       throws IOException {
     String content = findByIdFile.execute(id);
 
-    StandardResponseDto response = new StandardResponseDto<String>(
+    StandardResponseDto<String> response = new StandardResponseDto<String>(
         LocalDateTime.now(),
         HttpStatus.OK.value(),
         "Received sucessfully content.",

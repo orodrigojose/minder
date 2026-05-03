@@ -27,8 +27,14 @@ public class GetSettings {
 
     return new Settings(
         settings.getId(),
-        settings.getFontSize(),
         settings.getTheme(),
-        settings.getSlashCommands());
+        settings.getFontSize(),
+        settings.getPlaceholder(),
+
+        settings.getTopBar(),
+        settings.getToolBar(),
+
+        settings.getTitleText(),
+        settings.getWelcomeText());
   }
 }

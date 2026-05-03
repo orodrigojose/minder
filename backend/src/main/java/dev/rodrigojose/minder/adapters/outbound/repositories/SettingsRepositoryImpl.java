@@ -32,9 +32,17 @@ public class SettingsRepositoryImpl implements SettingsRepository {
   @Override
   public Settings getDefault() {
     JpaSettingsEntity defaultEntity = new JpaSettingsEntity();
+
     defaultEntity.setTheme("classic");
-    defaultEntity.setFontSize("16pt");
-    defaultEntity.setSlashCommands(true);
+    defaultEntity.setFontSize(16);
+    defaultEntity.setPlaceholder("Type / to see commands...");
+
+    defaultEntity.setTopBar(false);
+    defaultEntity.setToolBar(false);
+
+    defaultEntity.setTitleText("Minder");
+    defaultEntity.setWelcomeText("Welcome to the Minder Editor");
+
     JpaSettingsEntity saved = repository.save(defaultEntity);
 
     return toDomain(saved);
@@ -43,8 +51,17 @@ public class SettingsRepositoryImpl implements SettingsRepository {
   @Override
   public List<Settings> findAll() {
     return this.repository.findAll().stream()
-        .map(settings -> new Settings(settings.getId(), settings.getFontSize(), settings.getTheme(),
-            settings.getSlashCommands()))
+        .map(settings -> new Settings(
+            settings.getId(),
+            settings.getTheme(),
+            settings.getFontSize(),
+            settings.getPlaceholder(),
+
+            settings.getTopBar(),
+            settings.getToolBar(),
+
+            settings.getTitleText(),
+            settings.getWelcomeText()))
         .collect(Collectors.toList());
   }
 
@@ -57,9 +74,15 @@ public class SettingsRepositoryImpl implements SettingsRepository {
   private Settings toDomain(JpaSettingsEntity entity) {
     return new Settings(
         entity.getId(),
-        entity.getFontSize(),
         entity.getTheme(),
-        entity.getSlashCommands());
+        entity.getFontSize(),
+        entity.getPlaceholder(),
+
+        entity.getTopBar(),
+        entity.getToolBar(),
+
+        entity.getTitleText(),
+        entity.getWelcomeText());
   }
 
 }

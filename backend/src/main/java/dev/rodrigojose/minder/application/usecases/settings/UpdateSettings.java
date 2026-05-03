@@ -29,10 +29,20 @@ public class UpdateSettings {
 
     if (newSettings.getTheme() != null)
       settings.setTheme(newSettings.getTheme());
-    if (newSettings.getFontSize() != null)
+    if (newSettings.getFontSize() != null && settings.getFontSize() <= 40 && settings.getFontSize() >= 10)
       settings.setFontSize(newSettings.getFontSize());
-    if (newSettings.getSlashCommands() != null)
-      settings.setSlashCommands(newSettings.getSlashCommands());
+    if (newSettings.getPlaceholder() != null)
+      settings.setPlaceholder(newSettings.getPlaceholder());
+
+    if (newSettings.getTopBar() != null)
+      settings.setTopBar(newSettings.getTopBar());
+    if (newSettings.getToolBar() != null)
+      settings.setToolBar(newSettings.getToolBar());
+
+    if (newSettings.getTitleText() != null)
+      settings.setTitleText(newSettings.getTitleText());
+    if (newSettings.getWelcomeText() != null)
+      settings.setWelcomeText(newSettings.getWelcomeText());
 
     return repository.save(settings);
   }

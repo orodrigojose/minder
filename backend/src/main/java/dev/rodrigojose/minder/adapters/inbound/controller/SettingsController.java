@@ -12,6 +12,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import dev.rodrigojose.minder.application.usecases.settings.GetDefaultSettings;
 import dev.rodrigojose.minder.application.usecases.settings.GetSettings;
 import dev.rodrigojose.minder.application.usecases.settings.UpdateSettings;
 import dev.rodrigojose.minder.domain.settings.Settings;
@@ -23,6 +24,9 @@ import dev.rodrigojose.minder.infrastructure.StandardResponseDto;
 public class SettingsController {
   @Autowired
   private GetSettings getSettings;
+
+  @Autowired
+  private GetDefaultSettings getDefaultSettings;
 
   @Autowired
   private UpdateSettings updateSettings;
@@ -40,10 +44,17 @@ public class SettingsController {
     return ResponseEntity.ok(response);
   }
 
-  @GetMapping("/default")
-  public Settings getDefaultSettings() {
-    Settings settings = getSettings.execute();
-    return settings;
+  @GetMapping("/default/")
+  public ResponseEntity<StandardResponseDto<Settings>> getDefaultSettings() {
+    Settings settings = getDefaultSettings.execute();
+
+    StandardResponseDto<Settings> response = new StandardResponseDto<>(
+        LocalDateTime.now(),
+        HttpStatus.OK.value(),
+        "Default settings successfully restored!",
+        settings);
+
+    return ResponseEntity.ok(response);
   }
 
   @PutMapping("/update/")
