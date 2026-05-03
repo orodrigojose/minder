@@ -19,6 +19,9 @@ public class DeleteByIdFile {
   @Autowired
   private NodeRepositoryImpl repository;
 
+  @Autowired
+  private DeleteUploadedImageFile deleteUploadedImageFile;
+
   @Value("${minder.workspace:./.minder/nodes}")
   private String workspace;
 
@@ -35,6 +38,8 @@ public class DeleteByIdFile {
     Path path = Paths.get(workspace).resolve(node.getFile());
 
     if (Files.exists(path)) {
+      String content = Files.readString(path);
+      deleteUploadedImageFile.executeFromMarkdown(content);
       Files.delete(path);
     }
   }
