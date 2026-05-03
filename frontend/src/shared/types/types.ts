@@ -29,3 +29,24 @@ export interface IEdge {
   source: string;
   target: string;
 }
+
+export type CrepeTheme =
+  | "classic"
+  | "classic-dark"
+  | "nord"
+  | "nord-dark"
+  | "frame"
+  | "frame-dark";
+
+export type SettingsType = {
+  id: string;
+  fontSize?: number;
+  theme?: CrepeTheme;
+  placeholder?: string;
+
+  topBar?: boolean;
+  toolBar?: boolean;
+
+  titleText: string;
+  welcomeText: string;
+};

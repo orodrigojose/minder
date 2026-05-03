@@ -1,4 +1,4 @@
-import type { IEdge, INodeFlow } from "../types/types";
+import type { IEdge, INodeFlow, SettingsType } from "../types/types";
 
 const BASE_URL = import.meta.env.VITE_API_URL;
 
@@ -98,14 +98,49 @@ const updateFile = async (id: string, data: string) => {
   return await response.json();
 };
 
+const getSettings = async () => {
+  const response = await fetch(`${BASE_URL}/settings/`);
+  return await response.json();
+};
+
+const getDefaultSettings = async () => {
+  const response = await fetch(`${BASE_URL}/settings/default/`);
+  return await response.json();
+};
+
+const updateSettings = async (settings: SettingsType) => {
+  const response = await fetch(`${BASE_URL}/settings/update/`, {
+    method: "PUT",
+    headers: {
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify({
+      theme: settings.theme,
+      fontSize: settings.fontSize,
+      placeholder: settings.placeholder,
+
+      topBar: settings.topBar,
+      toolBar: settings.toolBar,
+
+      titleText: settings.titleText,
+      welcomeText: settings.welcomeText,
+    }),
+  });
+
+  return await response.json();
+};
+
 export {
   getEdges,
   createEdge,
   deleteEdge,
+  updateFile,
   getNodeContent,
   getNodes,
   updateNode,
   createNode,
   deleteNode,
-  updateFile,
+  getSettings,
+  getDefaultSettings,
+  updateSettings,
 };
