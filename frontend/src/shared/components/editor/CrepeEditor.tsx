@@ -9,6 +9,8 @@ import { getMarkdown, replaceAll } from "@milkdown/utils";
 import { math } from "@milkdown/plugin-math";
 import { diagram } from "@milkdown/plugin-diagram";
 
+import { uploadImage } from "../../utils/api";
+
 interface CrepeEditorProps {
   initialContent: string;
   onSave: (content: string) => void;
@@ -34,6 +36,9 @@ const CrepeEditor = ({ initialContent, onSave }: CrepeEditorProps) => {
       featureConfigs: {
         [CrepeFeature.Placeholder]: {
           text: settings.placeholder,
+        },
+        [CrepeFeature.ImageBlock]: {
+          onUpload: uploadImage,
         },
       },
     });

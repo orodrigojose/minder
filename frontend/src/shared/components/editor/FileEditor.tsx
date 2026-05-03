@@ -1,6 +1,10 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import { useNavigate } from "react-router-dom";
-import { getNodeContent, updateFile } from "../../utils/api";
+import {
+  deleteUploadedImage,
+  getNodeContent,
+  updateFile,
+} from "../../utils/api";
 
 import CrepeEditor from "./CrepeEditor";
 import { MilkdownProvider } from "@milkdown/react";
@@ -18,7 +22,30 @@ export const FileEditor = ({
   setLoading: (state: boolean) => void;
 }) => {
   const [data, setData] = useState("");
+  const lastSavedContentRef = useRef("");
   const navigate = useNavigate();
+
+  const extractUploadedImageFiles = (content: string) => {
+    const matches = content.match(/!\[[^\]]*\]\(([^)]+)\)/g) ?? [];
+
+    return matches
+      .map((match) => match.match(/!\[[^\]]*\]\(([^)]+)\)/)?.[1])
+      .filter((url): url is string => Boolean(url))
+      .map((url) => {
+        try {
+          const parsedUrl = new URL(url, window.location.origin);
+
+          if (!parsedUrl.pathname.startsWith("/uploads/")) {
+            return null;
+          }
+
+          return parsedUrl.pathname.split("/").pop() ?? null;
+        } catch {
+          return null;
+        }
+      })
+      .filter((fileName): fileName is string => Boolean(fileName));
+  };
 
   useEffect(() => {
     const fetchData = async () => {
@@ -29,6 +56,7 @@ export const FileEditor = ({
         navigate("/");
       } else {
         setData(response.data);
+        lastSavedContentRef.current = response.data;
         setLoading(false);
       }
     };
@@ -37,7 +65,28 @@ export const FileEditor = ({
   }, []);
 
   const handleSave = async (content: string) => {
-    await updateFile(id, content ? content : "");
+    const previousContent = lastSavedContentRef.current;
+    const nextContent = content ? content : "";
+
+    await updateFile(id, nextContent);
+
+    const previousUploads = new Set(extractUploadedImageFiles(previousContent));
+    const nextUploads = new Set(extractUploadedImageFiles(nextContent));
+    const removedUploads = [...previousUploads].filter(
+      (fileName) => !nextUploads.has(fileName)
+    );
+
+    await Promise.all(
+      removedUploads.map(async (fileName) => {
+        try {
+          await deleteUploadedImage(fileName);
+        } catch (error) {
+          console.error("Failed to delete uploaded image", fileName, error);
+        }
+      })
+    );
+
+    lastSavedContentRef.current = nextContent;
   };
 
   return (

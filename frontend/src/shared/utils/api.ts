@@ -130,6 +130,32 @@ const updateSettings = async (settings: SettingsType) => {
   return await response.json();
 };
 
+const uploadImage = async (file: File) => {
+  const fd = new FormData();
+
+  fd.append("fileImage", file);
+  const response = await fetch(`${BASE_URL}/file/assets/upload`, {
+    method: "POST",
+    body: fd,
+  });
+
+  if (!response.ok) {
+    throw new Error("Failed to upload image");
+  }
+
+  const res = await response.json();
+
+  return new URL(`/uploads/${res.data}`, BASE_URL).toString();
+};
+
+const deleteUploadedImage = async (fileName: string) => {
+  const response = await fetch(`${BASE_URL}/file/assets/upload/${fileName}`, {
+    method: "DELETE",
+  });
+
+  return await response.json();
+};
+
 export {
   getEdges,
   createEdge,
@@ -143,4 +169,6 @@ export {
   getSettings,
   getDefaultSettings,
   updateSettings,
+  uploadImage,
+  deleteUploadedImage,
 };
