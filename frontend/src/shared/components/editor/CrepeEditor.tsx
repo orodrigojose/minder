@@ -1,11 +1,13 @@
-import { useEffect, useRef } from "react";
+import { useContext, useEffect, useRef } from "react";
+import { SettingsContext } from "../../contexts/SettingsContext";
 
-import { Crepe } from "@milkdown/crepe";
-import { math } from "@milkdown/plugin-math";
-import { diagram } from "@milkdown/plugin-diagram";
 import { Milkdown, useEditor } from "@milkdown/react";
+import { Crepe, CrepeFeature } from "@milkdown/crepe";
 import { editorViewOptionsCtx } from "@milkdown/kit/core";
 import { getMarkdown, replaceAll } from "@milkdown/utils";
+
+import { math } from "@milkdown/plugin-math";
+import { diagram } from "@milkdown/plugin-diagram";
 
 interface CrepeEditorProps {
   initialContent: string;
@@ -15,22 +17,23 @@ interface CrepeEditorProps {
 const CrepeEditor = ({ initialContent, onSave }: CrepeEditorProps) => {
   const crepeRef = useRef<Crepe | null>(null);
   const saveTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const { settings } = useContext(SettingsContext);
 
   useEditor((root) => {
     const crepe = new Crepe({
       root,
       defaultValue: initialContent,
       features: {
-        "block-edit": true,
         table: true,
+        "block-edit": true,
         "link-tooltip": true,
-        [Crepe.Feature.Toolbar]: true,
-        [Crepe.Feature.TopBar]: true,
-        [Crepe.Feature.Cursor]: true,
+        [CrepeFeature.Toolbar]: settings.toolBar,
+        [CrepeFeature.TopBar]: settings.topBar,
+        [CrepeFeature.Cursor]: true,
       },
       featureConfigs: {
-        [Crepe.Feature.Placeholder]: {
-          text: "Please enter...",
+        [CrepeFeature.Placeholder]: {
+          text: settings.placeholder,
         },
       },
     });

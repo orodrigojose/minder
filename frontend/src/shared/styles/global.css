@@ -16,6 +16,31 @@
   z-index: 10;
 }
 
+.milkdown-crepe .milkdown .ProseMirror {
+  font-size: var(--editor-font-size, 16px);
+}
+
+.milkdown-crepe .milkdown .ProseMirror p,
+.milkdown-crepe .milkdown .ProseMirror li,
+.milkdown-crepe .milkdown .ProseMirror blockquote,
+.milkdown-crepe .milkdown .ProseMirror td,
+.milkdown-crepe .milkdown .ProseMirror th,
+.milkdown-crepe .milkdown .ProseMirror code,
+.milkdown-crepe .milkdown .ProseMirror pre {
+  font-size: inherit;
+}
+
 .milkdown-crepe .milkdown-cursor {
   display: block !important;
+}
+
+#fontsize {
+  -moz-appearance: textfield;
+  appearance: textfield;
+}
+
+#fontsize::-webkit-inner-spin-button,
+#fontsize::-webkit-outer-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
 }

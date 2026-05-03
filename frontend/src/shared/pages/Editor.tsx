@@ -2,21 +2,13 @@ import { useNavigate, useParams } from "react-router-dom";
 import FileEditor from "../components/editor/FileEditor";
 import Loading from "../components/editor/Loading";
 import Navbar from "../components/editor/Navbar";
-import { useEffect, useState } from "react";
+import { useContext, useEffect, useState } from "react";
 import { CiWarning } from "react-icons/ci";
 import toast from "react-hot-toast";
 
 import "@milkdown/crepe/theme/common/style.css";
-
-type CrepeTheme =
-  | "classic"
-  | "classic-dark"
-  | "nord"
-  | "nord-dark"
-  | "frame"
-  | "frame-dark";
-
-const theme: CrepeTheme = "frame-dark";
+import { SettingsContext } from "../contexts/SettingsContext";
+import type { CrepeTheme } from "../types/types";
 
 const themeStylesheets = {
   classic: () => import("@milkdown/crepe/theme/classic.css"),
@@ -29,10 +21,12 @@ const themeStylesheets = {
 
 const readThemeBackground = () => {
   const probe = document.createElement("div");
+
   probe.className = "milkdown";
   probe.style.position = "absolute";
   probe.style.left = "-9999px";
   probe.style.top = "-9999px";
+
   document.body.appendChild(probe);
 
   const backgroundColor = getComputedStyle(probe)
@@ -48,9 +42,14 @@ const Editor = () => {
   const [loading, setLoading] = useState(true);
   const [showLoadingLayer, setShowLoadingLayer] = useState(true);
   const [backgroundColor, setBackgroundColor] = useState("#1a1a1a");
-  const { id } = useParams();
-
+  const { settings } = useContext(SettingsContext);
   const navigate = useNavigate();
+
+  const theme: CrepeTheme = (
+    settings ? settings.theme : "frame-dark"
+  ) as CrepeTheme;
+
+  const { id } = useParams();
 
   useEffect(() => {
     void themeStylesheets[theme]().then(() => {
@@ -92,9 +91,13 @@ const Editor = () => {
       >
         <Navbar />
         <div
-          className={`h-screen overflow-x-hidden transition-opacity duration-500 ease-out${
+          className={`milkdown-crepe h-screen overflow-x-hidden transition-opacity duration-500 ease-out${
             loading ? "opacity-0" : "opacity-100"
           }`}
+          style={{
+            ["--editor-font-size" as any]: `${settings.fontSize ?? 16}px`,
+            ["--crepe-font-family" as any]: '"Inter", sans-serif',
+          }}
         >
           <FileEditor
             id={id || ""}
