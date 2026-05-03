@@ -3,3 +3,5 @@
 workspace/
 backend/target/
 frontend/node_modules/
+
+*:Zone.Identifier
