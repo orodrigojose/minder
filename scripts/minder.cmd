@@ -2,4 +2,6 @@
 setlocal
 
 set SCRIPT_DIR=%~dp0
-powershell -NoLogo -NoProfile -ExecutionPolicy Bypass -File "%SCRIPT_DIR%minder.ps1" %*
+pushd "%SCRIPT_DIR%"
+powershell -NoLogo -NoProfile -ExecutionPolicy Bypass -File "%CD%\minder.ps1" %*
+popd

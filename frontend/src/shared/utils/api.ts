@@ -1,19 +1,21 @@
 import type { IEdge, INodeFlow, SettingsType } from "../types/types";
 
-const BASE_URL = import.meta.env.VITE_API_URL;
+const BASE_URL = (import.meta.env.VITE_API_URL || "").replace(/\/$/, "");
+
+const buildUrl = (path: string) => `${BASE_URL}${path}`;
 
 const getNodeContent = async (id: string) => {
-  const response = await fetch(`${BASE_URL}/node/file/${id}`);
+  const response = await fetch(buildUrl(`/node/file/${id}`));
   return await response.json();
 };
 
 const getNodes = async () => {
-  const response = await fetch(`${BASE_URL}/node/`);
+  const response = await fetch(buildUrl("/node/"));
   return await response.json();
 };
 
 const updateNode = async (id: string, x: number, y: number) => {
-  const response = await fetch(`${BASE_URL}/node/update/${id}`, {
+  const response = await fetch(buildUrl(`/node/update/${id}`), {
     method: "PUT",
     headers: { "Content-Type": "application/json" },
     body: JSON.stringify({
@@ -38,7 +40,7 @@ const createNode = async (nodeName: string, nodes: INodeFlow[]) => {
     file: `${nodeName}.md`,
   };
 
-  const result = await fetch(`${BASE_URL}/node/create`, {
+  const result = await fetch(buildUrl("/node/create"), {
     method: "POST",
     headers: {
       "Content-Type": "application/json",
@@ -50,7 +52,7 @@ const createNode = async (nodeName: string, nodes: INodeFlow[]) => {
 };
 
 const deleteNode = async (id: string) => {
-  const result = await fetch(`${BASE_URL}/node/delete/${id}`, {
+  const result = await fetch(buildUrl(`/node/delete/${id}`), {
     method: "DELETE",
   });
 
@@ -58,12 +60,12 @@ const deleteNode = async (id: string) => {
 };
 
 const getEdges = async () => {
-  const response = await fetch(`${BASE_URL}/edge/`);
+  const response = await fetch(buildUrl("/edge/"));
   return await response.json();
 };
 
 const createEdge = async (edge: IEdge) => {
-  const result = await fetch(`${BASE_URL}/edge/create`, {
+  const result = await fetch(buildUrl("/edge/create"), {
     method: "POST",
     headers: {
       "Content-Type": "application/json",
@@ -78,7 +80,7 @@ const createEdge = async (edge: IEdge) => {
 };
 
 const deleteEdge = async (edge: IEdge) => {
-  const result = await fetch(`${BASE_URL}/edge/delete/${edge.id}`, {
+  const result = await fetch(buildUrl(`/edge/delete/${edge.id}`), {
     method: "DELETE",
   });
 
@@ -86,7 +88,7 @@ const deleteEdge = async (edge: IEdge) => {
 };
 
 const updateFile = async (id: string, data: string) => {
-  const response = await fetch(`${BASE_URL}/file/update/${id}`, {
+  const response = await fetch(buildUrl(`/file/update/${id}`), {
     method: "PUT",
     headers: {
       "Content-Type": "text/plain; charset=utf-8",
@@ -99,17 +101,17 @@ const updateFile = async (id: string, data: string) => {
 };
 
 const getSettings = async () => {
-  const response = await fetch(`${BASE_URL}/settings/`);
+  const response = await fetch(buildUrl("/settings/"));
   return await response.json();
 };
 
 const getDefaultSettings = async () => {
-  const response = await fetch(`${BASE_URL}/settings/default/`);
+  const response = await fetch(buildUrl("/settings/default/"));
   return await response.json();
 };
 
 const updateSettings = async (settings: SettingsType) => {
-  const response = await fetch(`${BASE_URL}/settings/update/`, {
+  const response = await fetch(buildUrl("/settings/update/"), {
     method: "PUT",
     headers: {
       "Content-Type": "application/json",
@@ -134,7 +136,7 @@ const uploadImage = async (file: File) => {
   const fd = new FormData();
 
   fd.append("fileImage", file);
-  const response = await fetch(`${BASE_URL}/file/assets/upload`, {
+  const response = await fetch(buildUrl("/file/assets/upload"), {
     method: "POST",
     body: fd,
   });
@@ -145,11 +147,11 @@ const uploadImage = async (file: File) => {
 
   const res = await response.json();
 
-  return new URL(`/uploads/${res.data}`, BASE_URL).toString();
+  return new URL(`/uploads/${res.data}`, BASE_URL || window.location.origin).toString();
 };
 
 const deleteUploadedImage = async (fileName: string) => {
-  const response = await fetch(`${BASE_URL}/file/assets/upload/${fileName}`, {
+  const response = await fetch(buildUrl(`/file/assets/upload/${fileName}`), {
     method: "DELETE",
   });
 

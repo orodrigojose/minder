@@ -8,7 +8,6 @@ param(
 
 $ErrorActionPreference = 'Stop'
 
-$invocationDir = (Get-Location).Path
 $scriptDir = Split-Path -Parent $MyInvocation.MyCommand.Path
 $rootDir = (Resolve-Path (Join-Path $scriptDir '..')).Path
 Set-Location $rootDir
@@ -55,16 +54,39 @@ function Load-Env {
   if (-not $env:MINDER_PORT) { $env:MINDER_PORT = '8080' }
 }
 
+function Save-Env([string]$varName, [string]$varValue) {
+  if (-not (Test-Path '.env')) {
+    return
+  }
+  
+  $lines = @(Get-Content '.env')
+  $found = $false
+  
+  for ($i = 0; $i -lt $lines.Count; $i++) {
+    if ($lines[$i] -match "^$varName=") {
+      $lines[$i] = "$varName=$varValue"
+      $found = $true
+      break
+    }
+  }
+  
+  if (-not $found) {
+    $lines += "$varName=$varValue"
+  }
+  
+  $lines | Set-Content '.env'
+}
+
 function Resolve-WorkspaceHostPath([string]$workspaceInput) {
   if ([string]::IsNullOrWhiteSpace($workspaceInput) -or $workspaceInput -eq '.') {
-    return $invocationDir
+    return $rootDir -replace '\\', '/'
   }
 
   if ([System.IO.Path]::IsPathRooted($workspaceInput)) {
-    return [System.IO.Path]::GetFullPath($workspaceInput)
+    return ([System.IO.Path]::GetFullPath($workspaceInput) -replace '\\', '/')
   }
 
-  return [System.IO.Path]::GetFullPath((Join-Path $invocationDir $workspaceInput))
+  return ([System.IO.Path]::GetFullPath((Join-Path $rootDir $workspaceInput)) -replace '\\', '/')
 }
 
 function Ensure-WorkspacePath([string]$workspaceHostPath) {
@@ -72,14 +94,51 @@ function Ensure-WorkspacePath([string]$workspaceHostPath) {
   New-Item -ItemType Directory -Path (Join-Path $workspaceHostPath '.minder/nodes') -Force | Out-Null
 }
 
-function Run-Compose([string[]]$args) {
-  $composeArgs = @('-f', $composeFile) + $args
-
-  if ($composeCmd.Count -eq 1) {
-    & $composeCmd[0] @composeArgs
+function Flatten-Args([object]$items) {
+  $out = @()
+  if ($null -eq $items) { return $out }
+  if ($items -is [System.Array]) {
+    foreach ($it in $items) {
+      $out += (Flatten-Args $it)
+    }
   }
   else {
-    & $composeCmd[0] $composeCmd[1] @composeArgs
+    $out += $items
+  }
+  return $out
+}
+
+function Run-Compose() {
+  # Flatten any nested arrays that might come from callers
+  $composeArgs = Flatten-Args $args
+
+  # Build the executable and argument list explicitly
+  if ($composeCmd.Count -eq 1) {
+    # docker-compose (single executable)
+    $exe = $composeCmd[0]
+    $argList = @('-f', $composeFile) + $composeArgs
+  }
+  else {
+    # docker compose (docker + compose subcommand)
+    $exe = $composeCmd[0]
+    $argList = @($composeCmd[1], '-f', $composeFile) + $composeArgs
+  }
+
+  # Convert any non-string args to string (prevent System.Object[] entries)
+  $argList = $argList | ForEach-Object { if ($_ -is [string]) { $_ } else { $_.ToString() } }
+
+  $argString = $argList -join ' '
+  Write-Host "Running: $exe $argString"
+
+  try {
+    $proc = Start-Process -FilePath $exe -ArgumentList $argList -NoNewWindow -PassThru -Wait -RedirectStandardOutput stdout.txt -RedirectStandardError stderr.txt
+    Get-Content stdout.txt -Raw | Write-Host
+    Get-Content stderr.txt -Raw | Write-Host
+    Remove-Item stdout.txt, stderr.txt -ErrorAction SilentlyContinue
+  }
+  catch {
+    Write-Host "Erro ao executar '$exe': $_" -ForegroundColor Red
+    throw
   }
 }
 
@@ -139,6 +198,7 @@ switch ($command) {
     Ensure-EnvFile
     Load-Env
     $env:MINDER_WORKSPACE_PATH = Resolve-WorkspaceHostPath $workspace
+    Save-Env 'MINDER_WORKSPACE_PATH' $env:MINDER_WORKSPACE_PATH
     Ensure-WorkspacePath $env:MINDER_WORKSPACE_PATH
     Run-Compose @('up', '-d', '--force-recreate', '--remove-orphans')
     Write-Host "Workspace host path: $($env:MINDER_WORKSPACE_PATH)"
@@ -148,6 +208,7 @@ switch ($command) {
     Ensure-EnvFile
     Load-Env
     $env:MINDER_WORKSPACE_PATH = Resolve-WorkspaceHostPath $workspace
+    Save-Env 'MINDER_WORKSPACE_PATH' $env:MINDER_WORKSPACE_PATH
     Ensure-WorkspacePath $env:MINDER_WORKSPACE_PATH
     Run-Compose @('down')
     Run-Compose @('up', '-d', '--force-recreate', '--remove-orphans')
@@ -158,6 +219,7 @@ switch ($command) {
     Ensure-EnvFile
     Load-Env
     $env:MINDER_WORKSPACE_PATH = Resolve-WorkspaceHostPath $workspace
+    Save-Env 'MINDER_WORKSPACE_PATH' $env:MINDER_WORKSPACE_PATH
     Ensure-WorkspacePath $env:MINDER_WORKSPACE_PATH
     Run-Compose @('up', '-d', '--build', '--force-recreate', '--remove-orphans')
     Write-Host "Workspace host path: $($env:MINDER_WORKSPACE_PATH)"

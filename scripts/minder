@@ -57,13 +57,16 @@ load_env() {
 
 resolve_workspace_host_path() {
 	local workspace_input="$1"
+	local resolved_path
 
 	case "$workspace_input" in
-		"") printf "%s" "$INVOCATION_DIR" ;;
-		.) printf "%s" "$INVOCATION_DIR" ;;
-		/*) printf "%s" "$workspace_input" ;;
-		*) printf "%s" "$INVOCATION_DIR/$workspace_input" ;;
+		"") resolved_path="$ROOT_DIR" ;;
+		.) resolved_path="$ROOT_DIR" ;;
+		/*) resolved_path="$workspace_input" ;;
+		*) resolved_path="$ROOT_DIR/$workspace_input" ;;
 	esac
+
+	printf "%s" "${resolved_path//\\//}"
 }
 
 ensure_workspace_path() {

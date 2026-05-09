@@ -4,5 +4,12 @@ services:
     ports:
       - "8080:8080"
     volumes:
-      - ${MINDER_WORKSPACE_PATH:-./workspace}:/workspace
+      - type: bind
+        source: ${MINDER_WORKSPACE_PATH:-.}
+        target: /workspace
+    environment:
+      - SPRING_DATASOURCE_URL=jdbc:h2:file:/workspace/.minder/database/Data.db;DB_CLOSE_DELAY=-1
+      - SPRING_DATASOURCE_USERNAME=${SPRING_DATASOURCE_USERNAME:-sa}
+      - SPRING_DATASOURCE_PASSWORD=${SPRING_DATASOURCE_PASSWORD:-}
+      - SPRING_JPA_HIBERNATE_DDL_AUTO=update
     restart: always
