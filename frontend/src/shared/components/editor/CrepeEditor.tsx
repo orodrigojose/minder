@@ -7,9 +7,11 @@ import { editorViewOptionsCtx } from "@milkdown/kit/core";
 import { getMarkdown, replaceAll } from "@milkdown/utils";
 
 import { math } from "@milkdown/plugin-math";
-import { diagram } from "@milkdown/plugin-diagram";
 
 import { uploadImage } from "../../utils/api";
+import mermaid from "mermaid";
+
+mermaid.initialize({ startOnLoad: true });
 
 interface CrepeEditorProps {
   initialContent: string;
@@ -40,10 +42,28 @@ const CrepeEditor = ({ initialContent, onSave }: CrepeEditorProps) => {
         [CrepeFeature.ImageBlock]: {
           onUpload: uploadImage,
         },
+        [CrepeFeature.CodeMirror]: {
+          renderPreview: (language, content, applyPreview) => {
+            // Esta condição detecta o ```mermaid do seu markdown
+            if (language === "mermaid" && content) {
+              const id = `mermaid-${Math.random().toString(36).substr(2, 9)}`;
+
+              mermaid
+                .render(id, content)
+                .then(({ svg }) => {
+                  applyPreview(svg);
+                })
+                .catch((err) => {
+                  applyPreview(`<pre style="color:red">${err.message}</pre>`);
+                });
+            }
+            return null;
+          },
+        },
       },
     });
 
-    crepe.editor.use(math as any).use(diagram as any);
+    crepe.editor.use(math as any);
 
     crepe.editor.config((ctx) => {
       ctx.update(editorViewOptionsCtx, (prev) => ({
