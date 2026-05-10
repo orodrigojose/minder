@@ -85,23 +85,23 @@ const Settings = () => {
   };
 
   return (
-    <section className="bg-neutral-950/80 w-full h-full text-neutral-100 flex justify-center p-8">
-      <form className="flex flex-col w-3/4 gap-8" onSubmit={handleSettings}>
-        <header className="flex items-center justify-between">
+    <section className="minder-home w-full h-full text-neutral-100 flex justify-center px-6 py-12">
+      <form className="flex flex-col w-full max-w-3xl gap-8" onSubmit={handleSettings}>
+        <header className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
           <h2 className="text-neutral-200/90 font-semibold flex items-center gap-3 text-lg">
             <FaUser />
             User settings
           </h2>
-          <div className="flex gap-3">
+          <div className="flex flex-wrap gap-3">
             <button
-              className="px-4 py-1.5 bg-blue-500 hover:bg-blue-700 transition rounded-sm flex items-center gap-2 cursor-pointer text-white"
+              className="px-4 py-2 border border-white/15 rounded-md text-sm text-gray-200 hover:border-white/30 hover:text-white transition flex items-center gap-2"
               type="submit"
             >
               <FaSave /> Save
             </button>
             <button
               type="button"
-              className="px-4 py-1.5 bg-neutral-800/60 hover:bg-neutral-700 transition rounded-sm flex items-center gap-2 cursor-pointer text-white"
+              className="px-4 py-2 border border-white/10 rounded-md text-sm text-gray-300 hover:border-white/25 hover:text-white transition flex items-center gap-2"
               onClick={async () => {
                 const response = await getDefaultSettings();
 
@@ -114,21 +114,21 @@ const Settings = () => {
           </div>
         </header>
 
-        <section className="flex flex-col gap-4 font-mono">
-          <div className="w-full flex items-center justify-between bg-neutral-700/25 rounded p-3">
+        <section className="flex flex-col gap-6 font-mono">
+          <div className="w-full flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between border-b border-white/10 pb-4">
             <div>
               <label className="text-sm text-neutral-300">Font size</label>
-              <div className="text-xs text-neutral-500 flex gap-1 justify-center items-center">
+              <div className="text-xs text-neutral-500 flex gap-1 items-center">
                 <FiAlertCircle />
                 Controls editor text size (px)
               </div>
             </div>
-            <div className="flex items-stretch overflow-hidden rounded border border-neutral-700 bg-neutral-800 text-white">
+            <div className="flex items-stretch overflow-hidden rounded border border-white/10 bg-transparent text-white">
               <button
                 type="button"
                 aria-label="Decrease font size"
                 onClick={() => changeFontSize(-1)}
-                className="flex h-8 w-8 items-center justify-center border-r border-neutral-700 bg-neutral-900/60 transition hover:bg-neutral-700/80 active:bg-neutral-600"
+                className="flex h-8 w-8 items-center justify-center border-r border-white/10 transition hover:bg-white/5"
               >
                 <FiChevronDown />
               </button>
@@ -139,30 +139,30 @@ const Settings = () => {
                 max={maxFontSize}
                 value={fontSize ?? 16}
                 onChange={(e) => setFontSize(Number(e.target.value))}
-                className="w-10 h-8 bg-transparent text-center outline-none appearance-none [-moz-appearance:textfield] [&::-webkit-inner-spin-button]:appearance-none [&::-webkit-outer-spin-button]:appearance-none"
+                className="w-12 h-8 bg-transparent text-center outline-none appearance-none [-moz-appearance:textfield] [&::-webkit-inner-spin-button]:appearance-none [&::-webkit-outer-spin-button]:appearance-none"
               />
               <button
                 type="button"
                 aria-label="Increase font size"
                 onClick={() => changeFontSize(1)}
-                className="flex h-8 w-8 items-center justify-center border-l border-neutral-700 bg-neutral-900/60 transition hover:bg-neutral-700/80 active:bg-neutral-600"
+                className="flex h-8 w-8 items-center justify-center border-l border-white/10 transition hover:bg-white/5"
               >
                 <FiChevronUp />
               </button>
             </div>
           </div>
 
-          <div className="w-full flex items-center justify-between bg-neutral-700/25 rounded p-3">
+          <div className="w-full flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between border-b border-white/10 pb-4">
             <div>
               <label className="text-sm text-neutral-300">Theme</label>
-              <div className="text-xs text-neutral-500 flex gap-1 justify-center items-center">
+              <div className="text-xs text-neutral-500 flex gap-1 items-center">
                 <FiAlertCircle />
                 Editor visual theme
               </div>
             </div>
             <select
               id="theme"
-              className="px-4 text-sm py-1 rounded bg-neutral-800 text-white outline-none border border-neutral-700"
+              className="px-4 text-sm py-2 rounded bg-transparent text-white outline-none border border-white/10"
               onChange={handleThemeSelect}
               value={theme}
             >
@@ -175,12 +175,12 @@ const Settings = () => {
             </select>
           </div>
 
-          <div className="w-full flex items-center justify-between bg-neutral-700/25 rounded p-3">
+          <div className="w-full flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between border-b border-white/10 pb-4">
             <div>
-              <label className="text-sm text-neutral-300">ToolBar</label>
-              <div className="text-xs text-neutral-500 flex gap-1 justify-center items-center">
+              <label className="text-sm text-neutral-300">Toolbar</label>
+              <div className="text-xs text-neutral-500 flex gap-1 items-center">
                 <FiAlertCircle />
-                Enable/Deactive ToolBar
+                Enable the editor toolbar
               </div>
             </div>
             <label className="flex items-center gap-3">
@@ -188,17 +188,17 @@ const Settings = () => {
                 type="checkbox"
                 checked={toolBar}
                 onChange={() => setToolBar(!toolBar)}
-                className="accent-blue-500 h-4 w-4 cursor-pointer"
+                className="accent-neutral-200 h-4 w-4 cursor-pointer"
               />
             </label>
           </div>
 
-          <div className="w-full flex items-center justify-between bg-neutral-700/25 rounded p-3">
+          <div className="w-full flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between border-b border-white/10 pb-4">
             <div>
-              <label className="text-sm text-neutral-300">TopBar</label>
-              <div className="text-xs text-neutral-500 flex gap-1 justify-center items-center">
+              <label className="text-sm text-neutral-300">Topbar</label>
+              <div className="text-xs text-neutral-500 flex gap-1 items-center">
                 <FiAlertCircle />
-                Enable/Deactive rich text TopBar
+                Enable the rich text topbar
               </div>
             </div>
             <label className="flex items-center gap-3">
@@ -206,17 +206,17 @@ const Settings = () => {
                 type="checkbox"
                 checked={topBar}
                 onChange={() => setTopBar(!topBar)}
-                className="accent-blue-500 h-4 w-4 cursor-pointer"
+                className="accent-neutral-200 h-4 w-4 cursor-pointer"
               />
             </label>
           </div>
 
-          <div className="w-full flex items-center justify-between bg-neutral-700/25 rounded p-3">
+          <div className="w-full flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between border-b border-white/10 pb-4">
             <div>
               <label className="text-sm text-neutral-300">Title text</label>
-              <div className="text-xs text-neutral-500 flex gap-1 justify-center items-center">
+              <div className="text-xs text-neutral-500 flex gap-1 items-center">
                 <FiAlertCircle />
-                Change Homepage title text.
+                Title shown on the homepage
               </div>
             </div>
             <input
@@ -224,16 +224,16 @@ const Settings = () => {
               value={titleText}
               onChange={(e) => setTitleText(e.target.value)}
               placeholder="Minder"
-              className="px-4 text-sm py-1 rounded bg-neutral-800 text-neutral-500 outline-none border border-neutral-700"
+              className="px-4 text-sm py-2 rounded bg-transparent text-neutral-200 outline-none border border-white/10 placeholder:text-neutral-600"
             />
           </div>
 
-          <div className="w-full flex items-center justify-between bg-neutral-700/25 rounded p-3">
+          <div className="w-full flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between border-b border-white/10 pb-4">
             <div>
               <label className="text-sm text-neutral-300">Welcome text</label>
-              <div className="text-xs text-neutral-500 flex gap-1 justify-center items-center">
+              <div className="text-xs text-neutral-500 flex gap-1 items-center">
                 <FiAlertCircle />
-                Change Homepage welcome subtitle text.
+                Subtitle shown on the homepage
               </div>
             </div>
             <input
@@ -241,16 +241,16 @@ const Settings = () => {
               value={welcomeText}
               placeholder="Hello sir! Welcome to the Minder editor!"
               onChange={(e) => setWelcomeText(e.target.value)}
-              className="px-4 text-sm py-1 rounded bg-neutral-800 text-neutral-500 outline-none border border-neutral-700"
+              className="px-4 text-sm py-2 rounded bg-transparent text-neutral-200 outline-none border border-white/10 placeholder:text-neutral-600"
             />
           </div>
 
-          <div className="w-full flex items-center justify-between bg-neutral-700/25 rounded p-3">
+          <div className="w-full flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between border-b border-white/10 pb-4">
             <div>
               <label className="text-sm text-neutral-300">Placeholder</label>
-              <div className="text-xs text-neutral-500 flex gap-1 justify-center items-center">
+              <div className="text-xs text-neutral-500 flex gap-1 items-center">
                 <FiAlertCircle />
-                Change placeholder editor
+                Editor placeholder text
               </div>
             </div>
             <input
@@ -258,7 +258,7 @@ const Settings = () => {
               value={placeholder}
               placeholder="Type / to see comands..."
               onChange={(e) => setPlaceholder(e.target.value)}
-              className="px-4 text-sm py-1 rounded bg-neutral-800 text-neutral-500 outline-none border border-neutral-700"
+              className="px-4 text-sm py-2 rounded bg-transparent text-neutral-200 outline-none border border-white/10 placeholder:text-neutral-600"
             />
           </div>
         </section>
