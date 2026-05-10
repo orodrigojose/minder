@@ -1,4 +1,21 @@
+@import url("https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600&family=IBM+Plex+Sans:wght@300;400;500;600;700&display=swap");
 @import "tailwindcss";
+
+:root {
+  --font-sans: "IBM Plex Sans", "Segoe UI", sans-serif;
+  --font-mono: "IBM Plex Mono", "SFMono-Regular", monospace;
+  --minder-bg: #0e0f11;
+  --minder-ink: #e2e2e2;
+  --minder-muted: #8f8f8f;
+  --minder-border: rgba(255, 255, 255, 0.08);
+  --minder-panel: rgba(255, 255, 255, 0.03);
+}
+
+body {
+  font-family: var(--font-sans);
+  color: var(--minder-ink);
+  background-color: var(--minder-bg);
+}
 
 .milkdown-crepe {
   display: flex;
@@ -43,4 +60,27 @@
 #fontsize::-webkit-outer-spin-button {
   -webkit-appearance: none;
   margin: 0;
+}
+
+.minder-home {
+  position: relative;
+  background-color: var(--minder-bg);
+  background-image: linear-gradient(180deg, rgba(255, 255, 255, 0.02), transparent 55%);
+  overflow: hidden;
+}
+
+
+.minder-logo {
+  animation: minder-float 7s ease-in-out infinite;
+  transform-origin: center;
+}
+
+@keyframes minder-float {
+  0%,
+  100% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(-6px);
+  }
 }
