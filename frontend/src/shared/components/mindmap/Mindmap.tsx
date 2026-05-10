@@ -224,20 +224,30 @@ const Mindmap = () => {
         />
       </Panel>
       <Background variant={BackgroundVariant.Dots} className="opacity-50" />
+
       <Controls
         showInteractive={false}
-        className="bg-[#1e1e1e] border border-white/10 rounded-lg p-1 shadow-2xl fill-white"
+        position="bottom-left"
+        className="bg-[#1e1e1e] border border-white/10 p-2 shadow-2xl fill-white"
         style={{
           display: "flex",
           flexDirection: "row",
+          gap: "4px",
           bottom: "20px",
           left: "20px",
+          boxShadow: "0px 4px 10px rgba(0,0,0,0.5)",
         }}
       />
 
       <MiniMap
-        className="bg-[#1e1e1e] border border-white/10 rounded-lg"
-        nodeColor="#9333ea"
+        className="bg-[#6e6d6d] border-2 border-white/20"
+        nodeStrokeWidth={3}
+        maskStrokeColor="#808080"
+        maskStrokeWidth={2}
+        nodeColor={(n) => {
+          if (n.selected) return "#2563eb4d";
+          return "#646d6d";
+        }}
         maskColor="rgba(0, 0, 0, 0.2)"
         pannable
         zoomable
