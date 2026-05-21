@@ -1,4 +1,4 @@
-import type { Position } from "@xyflow/react";
+import type { Node } from "@xyflow/react";
 
 export interface INode {
   id: string;
@@ -10,19 +10,13 @@ export interface INode {
   created_at: string;
 }
 
-export interface INodeFlow {
-  id: string;
-  position: {
-    x: number;
-    y: number;
-  };
-  sourcePosition?: Position;
-  targetPosition?: Position;
-  data: {
-    label: string;
-  };
-  type?: string;
-}
+export type MindmapNodeData = {
+  label: string;
+  entering?: boolean;
+  removing?: boolean;
+};
+
+export type INodeFlow = Node<MindmapNodeData>;
 
 export interface IEdge {
   id: string;

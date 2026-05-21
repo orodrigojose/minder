@@ -13,16 +13,21 @@ import {
   reconnectEdge,
 } from "@xyflow/react";
 import "@xyflow/react/dist/style.css";
+
 import * as api from "../../utils/api";
 import CreateAction from "./CreateAction";
 import { useNavigate } from "react-router-dom";
+import NodeComponent from "./NodeComponent";
 import serializerNode from "../../utils/serializerNode";
 import type { IEdge, INode, INodeFlow } from "../../types/types";
-import React, { useState, useCallback, useEffect, useRef } from "react";
+
 import toast from "react-hot-toast";
+import React, { useState, useCallback, useEffect, useRef } from "react";
 
 const initialNodes: Array<INodeFlow> = [];
 const initialEdges: Array<IEdge> = [];
+
+const NODE_EXIT_ANIMATION_MS = 260;
 
 const getErrorMessage = (error: unknown): string =>
   error instanceof Error ? error.message : "Unexpected error";
@@ -32,6 +37,8 @@ const Mindmap = () => {
   const [edges, setEdges] = useState(initialEdges);
   const [newNode, setNewNode] = useState("");
   const edgeReconnectSuccessful = useRef(true);
+  const lastCreatedNodeIdRef = useRef<string | null>(null);
+  const isInitialLoadRef = useRef(true);
   const navigate = useNavigate();
 
   const loadData = useCallback(async () => {
@@ -39,8 +46,14 @@ const Mindmap = () => {
 
     try {
       const { data: nodesData } = await api.getNodes();
+
+      const enteringId = lastCreatedNodeIdRef.current;
       const newNodes = nodesData
-        .map((node: INode) => serializerNode(node))
+        .map((node: INode) =>
+          serializerNode(node, {
+            entering: !isInitialLoadRef.current && node.id === enteringId,
+          }),
+        )
         .filter(
           (node: INodeFlow) =>
             !isNaN(node.position.x) && !isNaN(node.position.y),
@@ -50,6 +63,9 @@ const Mindmap = () => {
 
       setEdges(edgesResponse.data);
       setNodes(newNodes);
+
+      if (enteringId) lastCreatedNodeIdRef.current = null;
+      isInitialLoadRef.current = false;
       toast.dismiss(toastId);
     } catch (error) {
       console.error("Error loading data:", error);
@@ -61,18 +77,46 @@ const Mindmap = () => {
     loadData();
   }, [loadData]);
 
-  const onNodesChange = useCallback(
-    (
-      changes: NodeChange<{
-        id: string;
-        position: { x: number; y: number };
-        data: { label: string };
-      }>[],
-    ) => {
-      setNodes((nodesSnapshot) => applyNodeChanges(changes, nodesSnapshot));
-    },
-    [],
-  );
+  const onNodesChange = useCallback((changes: NodeChange<INodeFlow>[]) => {
+    const removeIds = changes
+      .filter((c) => c.type === "remove")
+      .map((c) => c.id)
+      .filter(Boolean);
+
+    const nonRemoveChanges = changes.filter((c) => c.type !== "remove");
+
+    setNodes((nodesSnapshot) => {
+      let nextNodes = applyNodeChanges(nonRemoveChanges, nodesSnapshot);
+
+      if (removeIds.length === 0) return nextNodes;
+
+      const removeSet = new Set(removeIds);
+      nextNodes = nextNodes.map((node) => {
+        if (!removeSet.has(node.id)) return node;
+        if (node.data?.removing) return node;
+
+        return {
+          ...node,
+          data: {
+            ...node.data,
+            entering: false,
+            removing: true,
+          },
+        };
+      });
+
+      return nextNodes;
+    });
+
+    if (removeIds.length > 0) {
+      const uniqueRemoveIds = Array.from(new Set(removeIds));
+      window.setTimeout(() => {
+        setNodes((current) =>
+          current.filter((node) => !uniqueRemoveIds.includes(node.id)),
+        );
+      }, NODE_EXIT_ANIMATION_MS);
+    }
+  }, []);
 
   const onNodesDelete = useCallback(
     async (nodesToDelete: INodeFlow[]) => {
@@ -189,6 +233,9 @@ const Mindmap = () => {
 
       if (result.status != 201) throw new Error(result.message);
 
+      const createdId = result?.data?.id ? String(result.data.id) : null;
+      if (createdId) lastCreatedNodeIdRef.current = createdId;
+
       toast.success("Node has been created");
       await loadData();
       setNewNode("");
@@ -201,6 +248,7 @@ const Mindmap = () => {
     <ReactFlow<INodeFlow, IEdge>
       nodes={nodes}
       edges={edges}
+      nodeTypes={{ default: NodeComponent }}
       onNodesChange={onNodesChange}
       onNodeDragStop={onNodeDragStop}
       onNodeDoubleClick={openNode}
