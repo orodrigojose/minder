@@ -24,6 +24,9 @@ const CrepeEditor = ({ initialContent, onSave }: CrepeEditorProps) => {
   const { settings } = useContext(SettingsContext);
 
   useEditor((root) => {
+    const editorLanguage =
+      navigator.language || document.documentElement.lang || "en";
+
     const crepe = new Crepe({
       root,
       defaultValue: initialContent,
@@ -44,7 +47,6 @@ const CrepeEditor = ({ initialContent, onSave }: CrepeEditorProps) => {
         },
         [CrepeFeature.CodeMirror]: {
           renderPreview: (language, content, applyPreview) => {
-            // Esta condição detecta o ```mermaid do seu markdown
             if (language === "mermaid" && content) {
               const id = `mermaid-${Math.random().toString(36).substr(2, 9)}`;
 
@@ -68,6 +70,13 @@ const CrepeEditor = ({ initialContent, onSave }: CrepeEditorProps) => {
     crepe.editor.config((ctx) => {
       ctx.update(editorViewOptionsCtx, (prev) => ({
         ...prev,
+        attributes: {
+          ...prev.attributes,
+          spellcheck: "true",
+          lang: editorLanguage,
+          autocorrect: "on",
+          autocapitalize: "sentences",
+        },
         handleDOMEvents: {
           ...prev.handleDOMEvents,
           keydown: (_view, event) => {
