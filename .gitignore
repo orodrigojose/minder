@@ -4,4 +4,7 @@ workspace/
 backend/target/
 frontend/node_modules/
 
+dist/
+build/
+node_modules/
 *:Zone.Identifier
