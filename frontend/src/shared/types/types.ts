@@ -38,9 +38,9 @@ export type SettingsType = {
   theme?: CrepeTheme;
   placeholder?: string;
 
+  vim?: boolean;
   topBar?: boolean;
   toolBar?: boolean;
-  vimMode?: boolean;
 
   titleText: string;
   welcomeText: string;

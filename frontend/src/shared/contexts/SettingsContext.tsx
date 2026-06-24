@@ -21,10 +21,9 @@ const initialSettings: SettingsType = {
   theme: "classic-dark",
   placeholder: "",
 
+  vim: false,
   topBar: false,
   toolBar: false,
-  vimMode: false,
-
   titleText: "",
   welcomeText: "",
 };
