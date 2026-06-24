@@ -23,6 +23,7 @@ const initialSettings: SettingsType = {
 
   topBar: false,
   toolBar: false,
+  vimMode: false,
 
   titleText: "",
   welcomeText: "",

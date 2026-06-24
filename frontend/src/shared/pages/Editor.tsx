@@ -9,6 +9,7 @@ import toast from "react-hot-toast";
 import "@milkdown/crepe/theme/common/style.css";
 import { SettingsContext } from "../contexts/SettingsContext";
 import type { CrepeTheme } from "../types/types";
+import StatusBar from "../components/editor/StatusBar";
 
 const themeStylesheets = {
   classic: () => import("@milkdown/crepe/theme/classic.css"),
@@ -44,6 +45,7 @@ const Editor = () => {
   const [backgroundColor, setBackgroundColor] = useState("#1a1a1a");
   const { settings } = useContext(SettingsContext);
   const navigate = useNavigate();
+  const activeVimMode = true;
 
   const theme: CrepeTheme = (
     settings ? settings.theme : "frame-dark"
@@ -106,7 +108,11 @@ const Editor = () => {
             backgroundColor={backgroundColor}
           />
         </div>
-
+        {activeVimMode && (
+          <div className="absolute bottom-0 w-full z-10">
+            <StatusBar />
+          </div>
+        )}
         {showLoadingLayer && (
           <div
             className={`absolute inset-0 z-10 transition-opacity duration-400 ease-out ${

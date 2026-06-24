@@ -1,4 +1,4 @@
-import { useContext, useEffect, useRef } from "react";
+import { useContext, useEffect, useMemo, useRef } from "react";
 import { SettingsContext } from "../../contexts/SettingsContext";
 
 import { Milkdown, useEditor } from "@milkdown/react";
@@ -8,8 +8,10 @@ import { getMarkdown, replaceAll } from "@milkdown/utils";
 
 import { math } from "@milkdown/plugin-math";
 
-import { uploadImage } from "../../utils/api";
 import mermaid from "mermaid";
+import { uploadImage } from "../../utils/api";
+import { useVimMode } from "../../../hooks/useVimMode";
+import { HandleKeyDown, type VimRefs } from "./keybinds/navigation";
 
 mermaid.initialize({ startOnLoad: true });
 
@@ -22,6 +24,28 @@ const CrepeEditor = ({ initialContent, onSave }: CrepeEditorProps) => {
   const crepeRef = useRef<Crepe | null>(null);
   const saveTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   const { settings } = useContext(SettingsContext);
+  const { vimMode, setVimMode, vimModeRef } = useVimMode();
+
+  useEffect(() => {
+    vimModeRef.current = vimMode;
+  }, [vimMode]);
+
+  const vimPendingRef = useRef<string>("");
+  const vimSearchRef = useRef<string>("");
+  const visualStartRef = useRef<number | null>(null);
+
+  const vimRefs: VimRefs = useMemo(
+    () => ({
+      vimPendingRef,
+      vimSearchRef,
+      visualStartRef,
+    }),
+    [],
+  );
+
+  const handleEditorKeyDown = (view: any, event: KeyboardEvent): boolean => {
+    return HandleKeyDown(view, event, vimMode, setVimMode, vimModeRef, vimRefs);
+  };
 
   useEditor((root) => {
     const editorLanguage =
@@ -79,7 +103,8 @@ const CrepeEditor = ({ initialContent, onSave }: CrepeEditorProps) => {
         },
         handleDOMEvents: {
           ...prev.handleDOMEvents,
-          keydown: (_view, event) => {
+          keydown: (view, event) => {
+            if (handleEditorKeyDown(view, event)) return true;
             if ((event.ctrlKey || event.metaKey) && event.key === "s") {
               event.preventDefault();
               const markdown = getMarkdown()(ctx);
@@ -117,7 +142,11 @@ const CrepeEditor = ({ initialContent, onSave }: CrepeEditorProps) => {
     }
   }, [initialContent]);
 
-  return <Milkdown />;
+  return (
+    <div className="relative h-full">
+      <Milkdown />
+    </div>
+  );
 };
 
 export default CrepeEditor;

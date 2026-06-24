@@ -40,7 +40,10 @@ export type SettingsType = {
 
   topBar?: boolean;
   toolBar?: boolean;
+  vimMode?: boolean;
 
   titleText: string;
   welcomeText: string;
 };
+
+export type VimMode = "INSERT" | "NORMAL" | "VISUAL";
