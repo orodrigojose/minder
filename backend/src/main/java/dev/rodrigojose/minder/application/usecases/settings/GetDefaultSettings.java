@@ -27,6 +27,7 @@ public class GetDefaultSettings {
         defaultSettings.getFontSize(),
         defaultSettings.getPlaceholder(),
 
+        defaultSettings.getVim(),
         defaultSettings.getTopBar(),
         defaultSettings.getToolBar(),
 

@@ -57,6 +57,7 @@ public class SettingsRepositoryImpl implements SettingsRepository {
             settings.getFontSize(),
             settings.getPlaceholder(),
 
+            settings.getVim(),
             settings.getTopBar(),
             settings.getToolBar(),
 
@@ -78,6 +79,7 @@ public class SettingsRepositoryImpl implements SettingsRepository {
         entity.getFontSize(),
         entity.getPlaceholder(),
 
+        entity.getVim(),
         entity.getTopBar(),
         entity.getToolBar(),
 

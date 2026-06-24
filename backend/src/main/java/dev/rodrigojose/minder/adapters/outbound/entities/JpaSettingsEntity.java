@@ -19,6 +19,7 @@ public class JpaSettingsEntity {
   private Integer fontSize;
   private String placeholder;
 
+  private Boolean vim;
   private Boolean topBar;
   private Boolean toolBar;
 
@@ -34,6 +35,7 @@ public class JpaSettingsEntity {
     this.fontSize = settings.getFontSize();
     this.placeholder = settings.getPlaceholder();
 
+    this.vim = settings.getVim();
     this.topBar = settings.getTopBar();
     this.toolBar = settings.getToolBar();
 
@@ -55,6 +57,10 @@ public class JpaSettingsEntity {
 
   public String getPlaceholder() {
     return placeholder;
+  }
+
+  public Boolean getVim() {
+    return vim;
   }
 
   public Boolean getTopBar() {
@@ -87,6 +93,10 @@ public class JpaSettingsEntity {
 
   public void setPlaceholder(String placeholder) {
     this.placeholder = placeholder;
+  }
+
+  public void setVim(Boolean vim) {
+    this.vim = vim;
   }
 
   public void setTopBar(Boolean topBar) {

@@ -31,6 +31,7 @@ public class GetSettings {
         settings.getFontSize(),
         settings.getPlaceholder(),
 
+        settings.getVim(),
         settings.getTopBar(),
         settings.getToolBar(),
 

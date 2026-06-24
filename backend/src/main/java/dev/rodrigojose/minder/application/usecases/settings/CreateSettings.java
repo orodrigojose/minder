@@ -19,6 +19,7 @@ public class CreateSettings {
     defaultSettings.setFontSize(16);
     defaultSettings.setPlaceholder("Type / to see commands...");
 
+    defaultSettings.setVim(false);
     defaultSettings.setTopBar(false);
     defaultSettings.setToolBar(false);
 
@@ -33,6 +34,7 @@ public class CreateSettings {
         saved.getFontSize(),
         saved.getPlaceholder(),
 
+        saved.getVim(),
         saved.getTopBar(),
         saved.getToolBar(),
 
@@ -62,6 +64,7 @@ public class CreateSettings {
         saved.getFontSize(),
         saved.getPlaceholder(),
 
+        saved.getVim(),
         saved.getTopBar(),
         saved.getToolBar(),
 

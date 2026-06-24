@@ -8,6 +8,7 @@ public class Settings {
   private Integer fontSize;
   private String placeholder;
 
+  private Boolean vim;
   private Boolean topBar;
   private Boolean toolBar;
 
@@ -17,13 +18,14 @@ public class Settings {
   public Settings() {
   }
 
-  public Settings(UUID id, String theme, Integer fontSize, String placeholder, Boolean topBar, Boolean toolBar,
+  public Settings(UUID id, String theme, Integer fontSize, String placeholder, Boolean vim, Boolean topBar, Boolean toolBar,
       String titleText, String welcomeText) {
     this.id = id;
     this.theme = theme;
     this.fontSize = fontSize;
     this.placeholder = placeholder;
 
+    this.vim = vim;
     this.topBar = topBar;
     this.toolBar = toolBar;
 
@@ -45,6 +47,10 @@ public class Settings {
 
   public String getPlaceholder() {
     return placeholder;
+  }
+
+  public Boolean getVim() {
+    return vim;
   }
 
   public Boolean getTopBar() {
@@ -77,6 +83,10 @@ public class Settings {
 
   public void setPlaceholder(String placeholder) {
     this.placeholder = placeholder;
+  }
+
+  public void setVim(Boolean vim) {
+    this.vim = vim;
   }
 
   public void setTopBar(Boolean topBar) {

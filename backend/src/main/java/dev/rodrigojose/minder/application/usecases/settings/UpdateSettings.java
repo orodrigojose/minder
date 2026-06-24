@@ -21,7 +21,6 @@ public class UpdateSettings {
 
     if (all.isEmpty()) {
       Settings savedSettings = this.createSettings.execute(newSettings);
-
       return savedSettings;
     }
 
@@ -34,6 +33,8 @@ public class UpdateSettings {
     if (newSettings.getPlaceholder() != null)
       settings.setPlaceholder(newSettings.getPlaceholder());
 
+    if (newSettings.getVim() != null)
+      settings.setVim(newSettings.getVim());
     if (newSettings.getTopBar() != null)
       settings.setTopBar(newSettings.getTopBar());
     if (newSettings.getToolBar() != null)
