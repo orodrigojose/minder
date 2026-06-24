@@ -1,7 +1,8 @@
 import { useVimMode } from "../../../hooks/useVimMode";
 
 export default function StatusBar() {
-  const { vimModeRef} = useVimMode();
+  const { vimModeRef } = useVimMode();
+
   const modeColors = {
     NORMAL: "bg-green-600 text-black",
     INSERT: "bg-blue-600 text-white",
@@ -17,24 +18,18 @@ export default function StatusBar() {
       : "NORMAL";
 
   return (
-    <div className="absolute bottom-0 left-0 right-0 z-50">
-      <div className="flex h-6 items-center justify-between font-mono text-xs border-t border-zinc-700 bg-zinc-900 text-zinc-200">
-        <div
-          className={`px-3 font-bold ${
-            modeColors[mode as keyof typeof modeColors]
-          }`}
-        >
-          -- {mode} --
-        </div>
-
-        <div className="flex-1 px-3 truncate">
-          notes.md
-        </div>
-
-        <div className="px-3 text-zinc-400">
-          Ln 1, Col 1
-        </div>
+    <div className="flex h-6 items-center justify-between font-mono text-xs border-t border-zinc-700 bg-zinc-900 text-zinc-200 w-full select-none">
+      <div
+        className={`px-3 h-full flex items-center font-bold ${
+          modeColors[mode as keyof typeof modeColors]
+        }`}
+      >
+        -- {mode} --
       </div>
+
+      <div className="flex-1 px-3 truncate">notes.md</div>
+
+      <div className="px-3 text-zinc-400">Ln 1, Col 1</div>
     </div>
   );
 }

@@ -87,11 +87,11 @@ const Editor = () => {
       className="flex flex-col w-full h-screen overflow-hidden overflow-x-hidden"
       style={{ backgroundColor }}
     >
+      <Navbar />
       <div
         className="flex-1 min-h-0 relative overflow-hidden"
         style={{ backgroundColor }}
       >
-        <Navbar />
         <div
           className={`milkdown-crepe h-screen overflow-x-hidden transition-opacity duration-500 ease-out${
             loading ? "opacity-0" : "opacity-100"
@@ -108,14 +108,9 @@ const Editor = () => {
             backgroundColor={backgroundColor}
           />
         </div>
-        {activeVimMode && (
-          <div className="absolute bottom-0 w-full z-10">
-            <StatusBar />
-          </div>
-        )}
         {showLoadingLayer && (
           <div
-            className={`absolute inset-0 z-10 transition-opacity duration-400 ease-out ${
+            className={`absolute inset-0 z-50 transition-opacity duration-400 ease-out ${
               loading ? "opacity-100" : "opacity-0 pointer-events-none"
             }`}
           >
@@ -123,6 +118,11 @@ const Editor = () => {
           </div>
         )}
       </div>
+      {activeVimMode && (
+        <div className="w-full shrink-0 z-10">
+          <StatusBar />
+        </div>
+      )}
     </main>
   );
 };
