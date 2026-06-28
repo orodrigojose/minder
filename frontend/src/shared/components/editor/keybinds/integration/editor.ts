@@ -10,5 +10,18 @@ export const EditorHandleKeyDown = (
     return true;
   }
 
+  if (event.ctrlKey && event.key === "w") {
+    event.preventDefault();
+    onSave();
+    onExit();
+    return true;
+  }
+
+  if (event.ctrlKey && event.key === "q") {
+    event.preventDefault();
+    onExit();
+    return true;
+  }
+
   return false;
 };
