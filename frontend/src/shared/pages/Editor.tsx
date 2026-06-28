@@ -9,6 +9,8 @@ import toast from "react-hot-toast";
 import "@milkdown/crepe/theme/common/style.css";
 import { SettingsContext } from "../contexts/SettingsContext";
 import type { CrepeTheme } from "../types/types";
+import StatusBar from "../components/editor/StatusBar";
+import { VimModeProvider } from "../contexts/VimModeContext";
 
 const themeStylesheets = {
   classic: () => import("@milkdown/crepe/theme/classic.css"),
@@ -44,6 +46,7 @@ const Editor = () => {
   const [backgroundColor, setBackgroundColor] = useState("#1a1a1a");
   const { settings } = useContext(SettingsContext);
   const navigate = useNavigate();
+  const activeVimMode = settings.vim;
 
   const theme: CrepeTheme = (
     settings ? settings.theme : "frame-dark"
@@ -81,44 +84,51 @@ const Editor = () => {
   }, [loading]);
 
   return (
-    <main
-      className="flex flex-col w-full h-screen overflow-hidden overflow-x-hidden"
-      style={{ backgroundColor }}
-    >
-      <div
-        className="flex-1 min-h-0 relative overflow-hidden"
+    <VimModeProvider>
+      <main
+        className="flex flex-col w-full h-screen overflow-hidden overflow-x-hidden"
         style={{ backgroundColor }}
       >
         <Navbar />
         <div
-          className={`milkdown-crepe h-screen overflow-x-hidden transition-opacity duration-500 ease-out${
-            loading ? "opacity-0" : "opacity-100"
-          }`}
-          style={{
-            ["--editor-font-size" as any]: `${settings.fontSize ?? 16}px`,
-            ["--crepe-font-family" as any]: '"Inter", sans-serif',
-          }}
+          className="flex-1 min-h-0 relative overflow-hidden"
+          style={{ backgroundColor }}
         >
-          <FileEditor
-            id={id || ""}
-            loading={loading}
-            setLoading={setLoading}
-            backgroundColor={backgroundColor}
-          />
-        </div>
-
-        {showLoadingLayer && (
           <div
-            className={`absolute inset-0 z-10 transition-opacity duration-400 ease-out ${
-              loading ? "opacity-100" : "opacity-0 pointer-events-none"
+            className={`milkdown-crepe h-screen overflow-x-hidden transition-opacity duration-500 ease-out${
+              loading ? "opacity-0" : "opacity-100"
             }`}
+            style={{
+              ["--editor-font-size" as any]: `${settings.fontSize ?? 16}px`,
+              ["--crepe-font-family" as any]: '"Inter", sans-serif',
+            }}
           >
-            <Loading />
+            <FileEditor
+              id={id || ""}
+              loading={loading}
+              setLoading={setLoading}
+              backgroundColor={backgroundColor}
+            />
+          </div>
+          {showLoadingLayer && (
+            <div
+              className={`absolute inset-0 z-50 transition-opacity duration-400 ease-out ${
+                loading ? "opacity-100" : "opacity-0 pointer-events-none"
+              }`}
+            >
+              <Loading />
+            </div>
+          )}
+        </div>
+        {activeVimMode && (
+          <div className="w-full shrink-0 z-10">
+            <StatusBar />
           </div>
         )}
-      </div>
-    </main>
+      </main>
+    </VimModeProvider>
   );
+
 };
 
 export default Editor;

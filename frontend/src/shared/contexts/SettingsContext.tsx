@@ -21,9 +21,9 @@ const initialSettings: SettingsType = {
   theme: "classic-dark",
   placeholder: "",
 
+  vim: false,
   topBar: false,
   toolBar: false,
-
   titleText: "",
   welcomeText: "",
 };
@@ -55,6 +55,9 @@ const SettingsContextProvider = ({ children }: Props) => {
   const update = async (newSettings: SettingsType) => {
     const response = await updateSettings(newSettings);
     const updated = response?.data ?? response;
+
+    console.log(updated)
+
     if (updated) setSettings(updated);
 
     return response;

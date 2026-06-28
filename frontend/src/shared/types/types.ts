@@ -38,9 +38,12 @@ export type SettingsType = {
   theme?: CrepeTheme;
   placeholder?: string;
 
+  vim?: boolean;
   topBar?: boolean;
   toolBar?: boolean;
 
   titleText: string;
   welcomeText: string;
 };
+
+export type VimMode = "INSERT" | "NORMAL" | "VISUAL" | "COMMAND";

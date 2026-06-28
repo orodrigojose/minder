@@ -26,6 +26,7 @@ const Settings = () => {
   const [fontSize, setFontSize] = useState(settings.fontSize);
   const [placeholder, setPlaceholder] = useState(settings.placeholder);
 
+  const [vim, setVim] = useState(settings.vim);
   const [topBar, setTopBar] = useState(settings.topBar);
   const [toolBar, setToolBar] = useState(settings.toolBar);
 
@@ -37,6 +38,7 @@ const Settings = () => {
     setFontSize(settings.fontSize);
     setPlaceholder(settings.placeholder);
 
+    setVim(settings.vim);
     setTopBar(settings.topBar);
     setToolBar(settings.toolBar);
 
@@ -71,6 +73,7 @@ const Settings = () => {
           ? placeholder
           : "Please type / to see the commands...",
 
+      vim,
       topBar,
       toolBar,
 
@@ -81,12 +84,17 @@ const Settings = () => {
           : "Hello sir! Welcome to the Minder editor!",
     });
 
+    console.log(response);
+
     toast.success(response.message);
   };
 
   return (
     <section className="minder-home w-full h-full text-neutral-100 flex justify-center px-6 py-12">
-      <form className="flex flex-col w-full max-w-3xl gap-8" onSubmit={handleSettings}>
+      <form
+        className="flex flex-col w-full max-w-3xl gap-8"
+        onSubmit={handleSettings}
+      >
         <header className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
           <h2 className="text-neutral-200/90 font-semibold flex items-center gap-3 text-lg">
             <FaUser />
@@ -173,6 +181,24 @@ const Settings = () => {
               <option value="nord">Nord</option>
               <option value="nord-dark">Nord Dark</option>
             </select>
+          </div>
+
+          <div className="w-full flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between border-b border-white/10 pb-4">
+            <div>
+              <label className="text-sm text-neutral-300">VIM</label>
+              <div className="text-xs text-neutral-500 flex gap-1 items-center">
+                <FiAlertCircle />
+                VIM keybinds mode
+              </div>
+            </div>
+            <label className="flex items-center gap-3">
+              <input
+                type="checkbox"
+                checked={vim}
+                onChange={() => setVim(!vim)}
+                className="accent-neutral-200 h-4 w-4 cursor-pointer"
+              />
+            </label>
           </div>
 
           <div className="w-full flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between border-b border-white/10 pb-4">

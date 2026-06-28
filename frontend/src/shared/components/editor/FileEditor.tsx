@@ -73,7 +73,7 @@ export const FileEditor = ({
     const previousUploads = new Set(extractUploadedImageFiles(previousContent));
     const nextUploads = new Set(extractUploadedImageFiles(nextContent));
     const removedUploads = [...previousUploads].filter(
-      (fileName) => !nextUploads.has(fileName)
+      (fileName) => !nextUploads.has(fileName),
     );
 
     await Promise.all(
@@ -83,9 +83,10 @@ export const FileEditor = ({
         } catch (error) {
           console.error("Failed to delete uploaded image", fileName, error);
         }
-      })
+      }),
     );
 
+    toast.success("Node saved!", { position: "bottom-right" });
     lastSavedContentRef.current = nextContent;
   };
 

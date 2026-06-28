@@ -15,6 +15,7 @@ public class GetDefaultSettings {
     defaultSettings.setFontSize(16);
     defaultSettings.setPlaceholder("Type / to see commands...");
 
+    defaultSettings.setVim(false);
     defaultSettings.setTopBar(false);
     defaultSettings.setToolBar(false);
 
@@ -27,6 +28,7 @@ public class GetDefaultSettings {
         defaultSettings.getFontSize(),
         defaultSettings.getPlaceholder(),
 
+        defaultSettings.getVim(),
         defaultSettings.getTopBar(),
         defaultSettings.getToolBar(),
 
