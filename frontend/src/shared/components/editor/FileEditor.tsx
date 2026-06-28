@@ -86,7 +86,7 @@ export const FileEditor = ({
       }),
     );
 
-    toast.success("Node saved!", { position: "top-right" });
+    toast.success("Node saved!", { position: "bottom-right" });
     lastSavedContentRef.current = nextContent;
   };
 

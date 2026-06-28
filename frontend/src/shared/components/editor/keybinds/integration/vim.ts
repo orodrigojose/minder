@@ -93,7 +93,7 @@ export const VimHandleKeyDown = (
       const sel =
         Selection.findFrom(view.state.doc.resolve(pos), 1, true) ||
         view.state.selection;
-      view.dispatch(view.state.tr.setSelection(sel));
+      view.dispatch(view.state.tr.setSelection(sel).scrollIntoView());
       setVimMode("INSERT");
       return true;
     }
@@ -105,7 +105,7 @@ export const VimHandleKeyDown = (
       const sel =
         Selection.findFrom(view.state.doc.resolve(lineStart), 1, true) ||
         view.state.selection;
-      view.dispatch(view.state.tr.setSelection(sel));
+      view.dispatch(view.state.tr.setSelection(sel).scrollIntoView());
       setVimMode("INSERT");
       return true;
     }
@@ -116,7 +116,7 @@ export const VimHandleKeyDown = (
       const sel =
         Selection.findFrom(view.state.doc.resolve(lineEnd), -1, true) ||
         view.state.selection;
-      view.dispatch(view.state.tr.setSelection(sel));
+      view.dispatch(view.state.tr.setSelection(sel).scrollIntoView());
       setVimMode("INSERT");
       return true;
     }
@@ -130,7 +130,7 @@ export const VimHandleKeyDown = (
       const sel =
         Selection.findFrom(view.state.doc.resolve(lineEnd + 1), 1, true) ||
         view.state.selection;
-      view.dispatch(view.state.tr.setSelection(sel));
+      view.dispatch(view.state.tr.setSelection(sel).scrollIntoView());
       setVimMode("INSERT");
       return true;
     }
@@ -144,7 +144,7 @@ export const VimHandleKeyDown = (
       const sel =
         Selection.findFrom(view.state.doc.resolve(lineStart), 1, true) ||
         view.state.selection;
-      view.dispatch(view.state.tr.setSelection(sel));
+      view.dispatch(view.state.tr.setSelection(sel).scrollIntoView());
       setVimMode("INSERT");
       return true;
     }
@@ -156,7 +156,7 @@ export const VimHandleKeyDown = (
       );
       const sel =
         Selection.findFrom(resolved, -1, true) || view.state.selection;
-      view.dispatch(view.state.tr.setSelection(sel));
+      view.dispatch(view.state.tr.setSelection(sel).scrollIntoView());
       return true;
     }
     if (event.key === "l") {
@@ -165,7 +165,7 @@ export const VimHandleKeyDown = (
         Math.min(view.state.selection.from + 1, view.state.doc.content.size),
       );
       const sel = Selection.findFrom(resolved, 1, true) || view.state.selection;
-      view.dispatch(view.state.tr.setSelection(sel));
+      view.dispatch(view.state.tr.setSelection(sel).scrollIntoView());
       return true;
     }
 
@@ -185,14 +185,14 @@ export const VimHandleKeyDown = (
               1,
               true,
             ) || view.state.selection;
-          view.dispatch(view.state.tr.setSelection(sel));
+          view.dispatch(view.state.tr.setSelection(sel).scrollIntoView());
         } else {
           const resolved = view.state.doc.resolve(view.state.selection.from);
           const nextNodePos = resolved.after(resolved.depth);
           const sel =
             Selection.findFrom(view.state.doc.resolve(nextNodePos), 1, true) ||
             view.state.selection;
-          view.dispatch(view.state.tr.setSelection(sel));
+          view.dispatch(view.state.tr.setSelection(sel).scrollIntoView());
         }
       } catch (e) {
         console.warn("Error moving down:", e);
@@ -216,14 +216,14 @@ export const VimHandleKeyDown = (
               -1,
               true,
             ) || view.state.selection;
-          view.dispatch(view.state.tr.setSelection(sel));
+          view.dispatch(view.state.tr.setSelection(sel).scrollIntoView());
         } else {
           const resolved = view.state.doc.resolve(view.state.selection.from);
           const prevNodePos = Math.max(0, resolved.before(resolved.depth));
           const sel =
             Selection.findFrom(view.state.doc.resolve(prevNodePos), -1, true) ||
             view.state.selection;
-          view.dispatch(view.state.tr.setSelection(sel));
+          view.dispatch(view.state.tr.setSelection(sel).scrollIntoView());
         }
       } catch (e) {
         console.warn("Error moving up:", e);
@@ -245,7 +245,7 @@ export const VimHandleKeyDown = (
         const sel =
           Selection.findFrom(view.state.doc.resolve(newPos), 1, true) ||
           view.state.selection;
-        view.dispatch(view.state.tr.setSelection(sel));
+        view.dispatch(view.state.tr.setSelection(sel).scrollIntoView());
       }
       return true;
     }
@@ -260,7 +260,7 @@ export const VimHandleKeyDown = (
         const sel =
           Selection.findFrom(view.state.doc.resolve(newPos), -1, true) ||
           view.state.selection;
-        view.dispatch(view.state.tr.setSelection(sel));
+        view.dispatch(view.state.tr.setSelection(sel).scrollIntoView());
       }
       return true;
     }
@@ -277,7 +277,7 @@ export const VimHandleKeyDown = (
         const sel =
           Selection.findFrom(view.state.doc.resolve(newPos), 1, true) ||
           view.state.selection;
-        view.dispatch(view.state.tr.setSelection(sel));
+        view.dispatch(view.state.tr.setSelection(sel).scrollIntoView());
       }
       return true;
     }
@@ -290,7 +290,7 @@ export const VimHandleKeyDown = (
       const sel =
         Selection.findFrom(view.state.doc.resolve(lineStart), 1, true) ||
         view.state.selection;
-      view.dispatch(view.state.tr.setSelection(sel));
+      view.dispatch(view.state.tr.setSelection(sel).scrollIntoView());
       return true;
     }
     if (event.key === "$") {
@@ -300,7 +300,7 @@ export const VimHandleKeyDown = (
       const sel =
         Selection.findFrom(view.state.doc.resolve(lineEnd), -1, true) ||
         view.state.selection;
-      view.dispatch(view.state.tr.setSelection(sel));
+      view.dispatch(view.state.tr.setSelection(sel).scrollIntoView());
       return true;
     }
 
@@ -311,7 +311,7 @@ export const VimHandleKeyDown = (
         const sel =
           Selection.findFrom(view.state.doc.resolve(0), 1, true) ||
           view.state.selection;
-        view.dispatch(view.state.tr.setSelection(sel));
+        view.dispatch(view.state.tr.setSelection(sel).scrollIntoView());
         vimPendingRef.current = "";
         return true;
       }
@@ -330,7 +330,7 @@ export const VimHandleKeyDown = (
           -1,
           true,
         ) || view.state.selection;
-      view.dispatch(view.state.tr.setSelection(sel));
+      view.dispatch(view.state.tr.setSelection(sel).scrollIntoView());
       vimPendingRef.current = "";
       return true;
     }
@@ -390,7 +390,7 @@ export const VimHandleKeyDown = (
             lineStart,
             lineEnd,
           ),
-        ),
+        ).scrollIntoView(),
       );
       return true;
     }
@@ -422,7 +422,7 @@ export const VimHandleKeyDown = (
                 index,
                 index + searchTerm.length,
               ),
-            ),
+            ).scrollIntoView(),
           );
         }
       }
@@ -444,7 +444,7 @@ export const VimHandleKeyDown = (
             start,
             newPos,
           ),
-        ),
+        ).scrollIntoView(),
       );
       return true;
     }
@@ -458,7 +458,7 @@ export const VimHandleKeyDown = (
             start,
             newPos,
           ),
-        ),
+        ).scrollIntoView(),
       );
       return true;
     }
@@ -508,7 +508,7 @@ export const VimHandleKeyDown = (
               start,
               newEnd,
             ),
-          ),
+          ).scrollIntoView(),
         );
       } catch (e) {
         console.warn("Error in visual j:", e);
@@ -554,7 +554,7 @@ export const VimHandleKeyDown = (
               start,
               newEnd,
             ),
-          ),
+          ).scrollIntoView(),
         );
       } catch (e) {
         console.warn("Error in visual k:", e);

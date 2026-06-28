@@ -8,6 +8,10 @@ export interface VimModeContextType {
   commandBuffer: string;
   setCommandBuffer: (buf: string) => void;
   commandBufferRef: MutableRefObject<string>;
+  cursorLine: number;
+  cursorCol: number;
+  setCursorLine: (line: number) => void;
+  setCursorCol: (col: number) => void;
 }
 
 export const VimModeContext = createContext<VimModeContextType | null>(null);
@@ -17,6 +21,8 @@ export const VimModeProvider = ({ children }: { children: ReactNode }) => {
   const vimModeRef = useRef<VimMode>("NORMAL");
   const [commandBuffer, setCommandBuffer] = useState<string>("");
   const commandBufferRef = useRef<string>("");
+  const [cursorLine, setCursorLine] = useState<number>(1);
+  const [cursorCol, setCursorCol] = useState<number>(1);
 
   useEffect(() => {
     vimModeRef.current = vimMode;
@@ -35,6 +41,10 @@ export const VimModeProvider = ({ children }: { children: ReactNode }) => {
         commandBuffer,
         setCommandBuffer,
         commandBufferRef,
+        cursorLine,
+        cursorCol,
+        setCursorLine,
+        setCursorCol,
       }}
     >
       {children}

@@ -1,7 +1,7 @@
 import { useVimMode } from "../../../hooks/useVimMode";
 
 export default function StatusBar() {
-  const { vimMode, commandBuffer } = useVimMode();
+  const { vimMode, commandBuffer, cursorLine, cursorCol } = useVimMode();
 
   const modeColors = {
     NORMAL: "bg-green-600 text-black",
@@ -24,7 +24,7 @@ export default function StatusBar() {
 
       <div className="flex-1 px-3 truncate">notes.md</div>
 
-      <div className="px-3 text-zinc-400">Ln 1, Col 1</div>
+      <div className="px-3 text-zinc-400">Ln {cursorLine}, Col {cursorCol}</div>
     </div>
   );
 }

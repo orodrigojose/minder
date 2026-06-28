@@ -1,4 +1,4 @@
-import { useContext, useEffect, useMemo, useRef } from "react";
+import { useContext, useEffect, useMemo, useRef, useCallback } from "react";
 import { SettingsContext } from "../../contexts/SettingsContext";
 
 import { Milkdown, useEditor } from "@milkdown/react";
@@ -7,6 +7,7 @@ import { editorViewOptionsCtx } from "@milkdown/kit/core";
 import { getMarkdown, replaceAll } from "@milkdown/utils";
 
 import { math } from "@milkdown/plugin-math";
+import { Plugin, PluginKey } from "@milkdown/prose/state";
 
 import mermaid from "mermaid";
 import { uploadImage } from "../../utils/api";
@@ -21,6 +22,26 @@ interface CrepeEditorProps {
   onSave: (content: string) => void;
 }
 
+function computeCursorPosition(
+  doc: any,
+  pos: number,
+): { line: number; col: number } {
+  let line = 1;
+  let lastBlockStart = 0;
+
+  doc.nodesBetween(0, pos, (node: any, nodePos: number) => {
+    if (node.isBlock && nodePos < pos) {
+      line++;
+      lastBlockStart = nodePos + 1;
+    }
+  });
+
+  line = Math.max(1, line - 1);
+
+  const col = pos - lastBlockStart + 1;
+  return { line, col: Math.max(1, col) };
+}
+
 const CrepeEditor = ({ initialContent, onSave }: CrepeEditorProps) => {
   const crepeRef = useRef<Crepe | null>(null);
   const saveTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
@@ -31,6 +52,8 @@ const CrepeEditor = ({ initialContent, onSave }: CrepeEditorProps) => {
     vimModeRef,
     commandBufferRef,
     setCommandBuffer,
+    setCursorLine,
+    setCursorCol,
   } = useVimMode();
 
   const navigate = useNavigate();
@@ -56,6 +79,20 @@ const CrepeEditor = ({ initialContent, onSave }: CrepeEditorProps) => {
     }),
     [],
   );
+
+  const setCursorLineRef = useRef(setCursorLine);
+  const setCursorColRef = useRef(setCursorCol);
+  useEffect(() => {
+    setCursorLineRef.current = setCursorLine;
+    setCursorColRef.current = setCursorCol;
+  }, [setCursorLine, setCursorCol]);
+
+  const updateCursorPosition = useCallback((view: any) => {
+    const pos = view.state.selection.from;
+    const { line, col } = computeCursorPosition(view.state.doc, pos);
+    setCursorLineRef.current(line);
+    setCursorColRef.current(col);
+  }, []);
 
   const handleEditorKeyDown = (view: any, event: KeyboardEvent): boolean => {
     return HandleKeyDown(
@@ -123,6 +160,20 @@ const CrepeEditor = ({ initialContent, onSave }: CrepeEditorProps) => {
 
     crepe.editor.use(math as any);
 
+    const cursorTrackingPlugin = new Plugin({
+      key: new PluginKey("cursor-tracking"),
+      view() {
+        return {
+          update(view) {
+            const pos = view.state.selection.from;
+            const { line, col } = computeCursorPosition(view.state.doc, pos);
+            setCursorLineRef.current(line);
+            setCursorColRef.current(col);
+          },
+        };
+      },
+    });
+
     crepe.editor.config((ctx) => {
       ctx.update(editorViewOptionsCtx, (prev) => ({
         ...prev,
@@ -136,7 +187,10 @@ const CrepeEditor = ({ initialContent, onSave }: CrepeEditorProps) => {
         handleDOMEvents: {
           ...prev.handleDOMEvents,
           keydown: (view, event) => {
-            if (handleEditorKeyDown(view, event)) return true;
+            if (handleEditorKeyDown(view, event)) {
+              updateCursorPosition(view);
+              return true;
+            }
             if ((event.ctrlKey || event.metaKey) && event.key === "s") {
               event.preventDefault();
               const markdown = getMarkdown()(ctx);
@@ -149,6 +203,8 @@ const CrepeEditor = ({ initialContent, onSave }: CrepeEditorProps) => {
         },
       }));
     });
+
+    crepe.editor.use(() => cursorTrackingPlugin);
 
     crepe.on((listener) => {
       listener.markdownUpdated((_ctx, markdown) => {
