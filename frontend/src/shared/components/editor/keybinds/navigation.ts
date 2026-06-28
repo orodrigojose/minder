@@ -1,6 +1,7 @@
 import { type MutableRefObject } from "react";
 import { VimHandleKeyDown } from "./integration/vim";
 import type { VimMode } from "../../../types/types";
+import { EditorHandleKeyDown } from "./integration/editor";
 
 export interface VimRefs {
   vimPendingRef: MutableRefObject<string>;
@@ -20,20 +21,24 @@ export const HandleKeyDown = (
   onSave: () => void,
   onExit: () => void,
 ): boolean => {
-  if (vimIsActive) {
-    return VimHandleKeyDown(
-      view,
-      event,
-      setVimMode,
-      vimModeRef,
-      vimRefs,
-      commandBufferRef,
-      setCommandBuffer,
-      onSave,
-      onExit,
-    );
-  }
+  if (EditorHandleKeyDown(view, event, onSave, onExit)) return true;
 
+  if (vimIsActive) {
+    if (
+      VimHandleKeyDown(
+        view,
+        event,
+        setVimMode,
+        vimModeRef,
+        vimRefs,
+        commandBufferRef,
+        setCommandBuffer,
+        onSave,
+        onExit,
+      )
+    )
+      return true;
+  }
 
   return false;
 };

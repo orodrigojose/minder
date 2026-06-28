@@ -1,7 +1,8 @@
-import type { VimMode } from "../../../../types/types";
-import { Selection } from "@milkdown/prose/state";
-import type { MutableRefObject } from "react";
+import { undo } from "prosemirror-history";
 import type { VimRefs } from "../navigation";
+import type { MutableRefObject } from "react";
+import { Selection } from "@milkdown/prose/state";
+import type { VimMode } from "../../../../types/types";
 
 export const VimHandleKeyDown = (
   view: any,
@@ -369,7 +370,9 @@ export const VimHandleKeyDown = (
 
     if (event.key === "v") {
       event.preventDefault();
+
       setVimMode("VISUAL");
+
       visualStartRef.current = view.state.selection.from;
       return true;
     }
@@ -394,16 +397,16 @@ export const VimHandleKeyDown = (
 
     if (event.key === "u") {
       event.preventDefault();
-      view.dispatch(view.state.tr.undo());
+      undo(view.state, view.dispatch);
       return true;
     }
+
     if (event.ctrlKey && event.key === "r") {
       event.preventDefault();
       view.dispatch(view.state.tr.redo());
       return true;
     }
 
-    // Search: / ?
     if (event.key === "/") {
       event.preventDefault();
       const searchTerm = prompt("Search:", vimSearchRef.current);
@@ -427,7 +430,6 @@ export const VimHandleKeyDown = (
     }
   }
 
-  // VISUAL mode commands
   if (mode === "VISUAL") {
     const start = visualStartRef.current || view.state.selection.from;
     const current = view.state.selection.to;
@@ -530,10 +532,8 @@ export const VimHandleKeyDown = (
           return true;
         }
 
-        // Get offset in current line
         const offsetInLine = current - lineStart;
 
-        // Find previous line
         let prevLineEnd = lineStart - 1;
         let prevLineStart = 0;
 
@@ -544,7 +544,6 @@ export const VimHandleKeyDown = (
           }
         }
 
-        // Set selection end at same offset in previous line
         const prevPos = Math.min(prevLineStart + offsetInLine, prevLineEnd);
         const newEnd = Math.min(prevPos + 1, view.state.doc.content.size);
 
@@ -563,7 +562,6 @@ export const VimHandleKeyDown = (
       return true;
     }
 
-    // Delete selection: d x
     if (event.key === "d" || event.key === "x") {
       event.preventDefault();
       const { from, to } = view.state.selection;
