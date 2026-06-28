@@ -37,7 +37,7 @@ const Settings = () => {
     setTheme(settings.theme as CrepeTheme);
     setFontSize(settings.fontSize);
     setPlaceholder(settings.placeholder);
-  
+
     setVim(settings.vim);
     setTopBar(settings.topBar);
     setToolBar(settings.toolBar);
@@ -84,12 +84,17 @@ const Settings = () => {
           : "Hello sir! Welcome to the Minder editor!",
     });
 
+    console.log(response);
+
     toast.success(response.message);
   };
 
   return (
     <section className="minder-home w-full h-full text-neutral-100 flex justify-center px-6 py-12">
-      <form className="flex flex-col w-full max-w-3xl gap-8" onSubmit={handleSettings}>
+      <form
+        className="flex flex-col w-full max-w-3xl gap-8"
+        onSubmit={handleSettings}
+      >
         <header className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
           <h2 className="text-neutral-200/90 font-semibold flex items-center gap-3 text-lg">
             <FaUser />

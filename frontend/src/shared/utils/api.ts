@@ -121,6 +121,7 @@ const updateSettings = async (settings: SettingsType) => {
       fontSize: settings.fontSize,
       placeholder: settings.placeholder,
 
+      vim: settings.vim,
       topBar: settings.topBar,
       toolBar: settings.toolBar,
 

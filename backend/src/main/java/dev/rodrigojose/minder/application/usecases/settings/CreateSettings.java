@@ -28,6 +28,8 @@ public class CreateSettings {
 
     JpaSettingsEntity saved = repository.save(defaultSettings);
 
+    System.out.println(defaultSettings.getVim());
+
     return new Settings(
         saved.getId(),
         saved.getTheme(),

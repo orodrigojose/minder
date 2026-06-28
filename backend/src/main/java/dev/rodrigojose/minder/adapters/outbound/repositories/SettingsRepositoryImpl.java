@@ -37,6 +37,7 @@ public class SettingsRepositoryImpl implements SettingsRepository {
     defaultEntity.setFontSize(16);
     defaultEntity.setPlaceholder("Type / to see commands...");
 
+    defaultEntity.setVim(false);
     defaultEntity.setTopBar(false);
     defaultEntity.setToolBar(false);
 

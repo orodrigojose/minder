@@ -10,12 +10,7 @@ export default function StatusBar() {
     COMMAND: "bg-red-600 text-white",
   };
 
-  const statusline = vimModeRef.current;
-
-  const mode =
-    statusline.toUpperCase() in modeColors
-      ? statusline.toUpperCase()
-      : "NORMAL";
+  const mode = vimModeRef.current;
 
   return (
     <div className="flex h-6 items-center justify-between font-mono text-xs border-t border-zinc-700 bg-zinc-900 text-zinc-200 w-full select-none">

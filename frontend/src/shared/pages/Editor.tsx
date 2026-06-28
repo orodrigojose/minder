@@ -45,7 +45,7 @@ const Editor = () => {
   const [backgroundColor, setBackgroundColor] = useState("#1a1a1a");
   const { settings } = useContext(SettingsContext);
   const navigate = useNavigate();
-  const activeVimMode = true;
+  const activeVimMode = settings.vim;
 
   const theme: CrepeTheme = (
     settings ? settings.theme : "frame-dark"

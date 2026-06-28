@@ -55,6 +55,9 @@ const SettingsContextProvider = ({ children }: Props) => {
   const update = async (newSettings: SettingsType) => {
     const response = await updateSettings(newSettings);
     const updated = response?.data ?? response;
+
+    console.log(updated)
+
     if (updated) setSettings(updated);
 
     return response;

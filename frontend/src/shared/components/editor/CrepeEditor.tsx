@@ -44,7 +44,7 @@ const CrepeEditor = ({ initialContent, onSave }: CrepeEditorProps) => {
   );
 
   const handleEditorKeyDown = (view: any, event: KeyboardEvent): boolean => {
-    return HandleKeyDown(view, event, vimMode, setVimMode, vimModeRef, vimRefs);
+    return HandleKeyDown(settings.vim, view, event, setVimMode, vimModeRef, vimRefs);
   };
 
   useEditor((root) => {

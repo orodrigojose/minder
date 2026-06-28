@@ -48,6 +48,8 @@ public class SettingsController {
   public ResponseEntity<StandardResponseDto<Settings>> getDefaultSettings() {
     Settings settings = getDefaultSettings.execute();
 
+    System.out.println(settings.getVim());
+
     StandardResponseDto<Settings> response = new StandardResponseDto<>(
         LocalDateTime.now(),
         HttpStatus.OK.value(),

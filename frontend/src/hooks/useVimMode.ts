@@ -9,7 +9,7 @@ interface UseVimModeReturn {
 
 export function useVimMode(): UseVimModeReturn {
   const [vimMode, setVimMode] = useState<VimMode>("NORMAL");
-  const vimModeRef = useRef<VimMode>("INSERT");
+  const vimModeRef = useRef<VimMode>("NORMAL");
 
   return { vimMode, setVimMode, vimModeRef };
 }
