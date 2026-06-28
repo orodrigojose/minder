@@ -46,4 +46,4 @@ export type SettingsType = {
   welcomeText: string;
 };
 
-export type VimMode = "INSERT" | "NORMAL" | "VISUAL";
+export type VimMode = "INSERT" | "NORMAL" | "VISUAL" | "COMMAND";

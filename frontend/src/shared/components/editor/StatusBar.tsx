@@ -1,7 +1,7 @@
 import { useVimMode } from "../../../hooks/useVimMode";
 
 export default function StatusBar() {
-  const { vimModeRef } = useVimMode();
+  const { vimMode, commandBuffer } = useVimMode();
 
   const modeColors = {
     NORMAL: "bg-green-600 text-black",
@@ -10,7 +10,7 @@ export default function StatusBar() {
     COMMAND: "bg-red-600 text-white",
   };
 
-  const mode = vimModeRef.current;
+  const mode = vimMode;
 
   return (
     <div className="flex h-6 items-center justify-between font-mono text-xs border-t border-zinc-700 bg-zinc-900 text-zinc-200 w-full select-none">
@@ -19,7 +19,7 @@ export default function StatusBar() {
           modeColors[mode as keyof typeof modeColors]
         }`}
       >
-        -- {mode} --
+        {mode === "COMMAND" ? `:${commandBuffer}` : `-- ${mode} --`}
       </div>
 
       <div className="flex-1 px-3 truncate">notes.md</div>

@@ -9,15 +9,31 @@ export interface VimRefs {
 }
 
 export const HandleKeyDown = (
-  vimIsActive: Boolean,
+  vimIsActive: Boolean | undefined,
   view: any,
   event: KeyboardEvent,
   setVimMode: (mode: VimMode) => void,
   vimModeRef: MutableRefObject<VimMode>,
   vimRefs: VimRefs,
+  commandBufferRef: MutableRefObject<string>,
+  setCommandBuffer: (buf: string) => void,
+  onSave: () => void,
+  onExit: () => void,
 ): boolean => {
-  if (vimIsActive)
-    VimHandleKeyDown(view, event, setVimMode, vimModeRef, vimRefs);
+  if (vimIsActive) {
+    return VimHandleKeyDown(
+      view,
+      event,
+      setVimMode,
+      vimModeRef,
+      vimRefs,
+      commandBufferRef,
+      setCommandBuffer,
+      onSave,
+      onExit,
+    );
+  }
+
 
   return false;
 };

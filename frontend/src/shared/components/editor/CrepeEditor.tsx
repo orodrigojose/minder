@@ -12,6 +12,7 @@ import mermaid from "mermaid";
 import { uploadImage } from "../../utils/api";
 import { useVimMode } from "../../../hooks/useVimMode";
 import { HandleKeyDown, type VimRefs } from "./keybinds/navigation";
+import { useNavigate } from "react-router-dom";
 
 mermaid.initialize({ startOnLoad: true });
 
@@ -24,7 +25,20 @@ const CrepeEditor = ({ initialContent, onSave }: CrepeEditorProps) => {
   const crepeRef = useRef<Crepe | null>(null);
   const saveTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   const { settings } = useContext(SettingsContext);
-  const { vimMode, setVimMode, vimModeRef } = useVimMode();
+  const {
+    vimMode,
+    setVimMode,
+    vimModeRef,
+    commandBufferRef,
+    setCommandBuffer,
+  } = useVimMode();
+
+  const navigate = useNavigate();
+
+  const onSaveRef = useRef(onSave);
+  useEffect(() => {
+    onSaveRef.current = onSave;
+  }, [onSave]);
 
   useEffect(() => {
     vimModeRef.current = vimMode;
@@ -44,7 +58,25 @@ const CrepeEditor = ({ initialContent, onSave }: CrepeEditorProps) => {
   );
 
   const handleEditorKeyDown = (view: any, event: KeyboardEvent): boolean => {
-    return HandleKeyDown(settings.vim, view, event, setVimMode, vimModeRef, vimRefs);
+    return HandleKeyDown(
+      settings.vim,
+      view,
+      event,
+      setVimMode,
+      vimModeRef,
+      vimRefs,
+      commandBufferRef,
+      setCommandBuffer,
+      () => {
+        if (crepeRef.current) {
+          const markdown = getMarkdown()(crepeRef.current.editor.ctx);
+          onSaveRef.current(markdown);
+        }
+      },
+      () => {
+        navigate("/");
+      },
+    );
   };
 
   useEditor((root) => {

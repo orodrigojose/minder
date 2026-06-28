@@ -1,15 +1,11 @@
-import type { VimMode } from "../shared/types/types";
-import { useState, useRef, type MutableRefObject } from "react";
+import { useContext } from "react";
+import { VimModeContext } from "../shared/contexts/VimModeContext";
 
-interface UseVimModeReturn {
-  vimMode: VimMode;
-  setVimMode: (mode: VimMode) => void;
-  vimModeRef: MutableRefObject<VimMode>;
-}
+export function useVimMode() {
+  const context = useContext(VimModeContext);
 
-export function useVimMode(): UseVimModeReturn {
-  const [vimMode, setVimMode] = useState<VimMode>("NORMAL");
-  const vimModeRef = useRef<VimMode>("NORMAL");
+  if (!context)
+    throw new Error("useVimMode must be used within VimModeProvider");
 
-  return { vimMode, setVimMode, vimModeRef };
+  return context;
 }

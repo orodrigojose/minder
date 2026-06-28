@@ -9,9 +9,56 @@ export const VimHandleKeyDown = (
   setVimMode: (mode: VimMode) => void,
   vimModeRef: MutableRefObject<VimMode>,
   vimRefs: VimRefs,
-) => {
+  commandBufferRef: MutableRefObject<string>,
+  setCommandBuffer: (buf: string) => void,
+  onSave: () => void,
+  onExit: () => void,
+): boolean => {
   const mode = vimModeRef.current;
   const { vimPendingRef, vimSearchRef, visualStartRef } = vimRefs;
+  const commandBuffer = commandBufferRef.current;
+
+  if (mode === "COMMAND") {
+    if (event.key === "Escape") {
+      event.preventDefault();
+      setVimMode("NORMAL");
+      setCommandBuffer("");
+      return true;
+    }
+    if (event.key === "Backspace") {
+      event.preventDefault();
+      if (commandBuffer.length > 0) {
+        const nextBuffer = commandBuffer.slice(0, -1);
+        setCommandBuffer(nextBuffer);
+      } else {
+        setVimMode("NORMAL");
+      }
+      return true;
+    }
+    if (event.key === "Enter") {
+      event.preventDefault();
+      const cmd = commandBuffer.trim();
+      if (cmd === "w") {
+        onSave();
+      } else if (cmd === "q") {
+        onExit();
+      } else if (cmd === "wq") {
+        onSave();
+        onExit();
+      } else {
+        console.warn(`Unknown command: ${cmd}`);
+      }
+      setVimMode("NORMAL");
+      setCommandBuffer("");
+      return true;
+    }
+    if (event.key.length === 1) {
+      event.preventDefault();
+      setCommandBuffer(commandBuffer + event.key);
+      return true;
+    }
+    return true;
+  }
 
   if (event.key === "Escape") {
     if (mode !== "NORMAL") {
@@ -25,6 +72,12 @@ export const VimHandleKeyDown = (
   }
 
   if (mode === "NORMAL") {
+    if (event.key === ":") {
+      event.preventDefault();
+      setVimMode("COMMAND");
+      setCommandBuffer("");
+      return true;
+    }
     if (event.key === "i") {
       event.preventDefault();
       setVimMode("INSERT");
@@ -44,8 +97,7 @@ export const VimHandleKeyDown = (
       return true;
     }
     if (event.key === "I") {
-
-      console.log("insert mode")
+      console.log("insert mode");
       event.preventDefault();
       const { $from } = view.state.selection;
       const lineStart = view.state.doc.resolve($from.start()).pos;
@@ -96,7 +148,6 @@ export const VimHandleKeyDown = (
       return true;
     }
 
-    // Navigation: h j k l
     if (event.key === "h") {
       event.preventDefault();
       const resolved = view.state.doc.resolve(
@@ -316,7 +367,6 @@ export const VimHandleKeyDown = (
       return true;
     }
 
-    // Visual mode: v V
     if (event.key === "v") {
       event.preventDefault();
       setVimMode("VISUAL");
@@ -342,7 +392,6 @@ export const VimHandleKeyDown = (
       return true;
     }
 
-    // Undo/Redo: u C-r
     if (event.key === "u") {
       event.preventDefault();
       view.dispatch(view.state.tr.undo());
@@ -416,7 +465,6 @@ export const VimHandleKeyDown = (
       try {
         const text = view.state.doc.textContent;
 
-        // Find current line of cursor position
         let lineStart = 0;
         for (let i = current - 1; i >= 0; i--) {
           if (text[i] === "\n") {
@@ -433,10 +481,8 @@ export const VimHandleKeyDown = (
           }
         }
 
-        // Get offset in current line
         const offsetInLine = current - lineStart;
 
-        // Find next line
         let nextLineStart = lineEnd + 1;
         if (nextLineStart > text.length) {
           return true;
@@ -450,7 +496,6 @@ export const VimHandleKeyDown = (
           }
         }
 
-        // Set selection end at same offset in next line
         const nextPos = Math.min(nextLineStart + offsetInLine, nextLineEnd);
         const newEnd = Math.min(nextPos + 1, view.state.doc.content.size);
 
@@ -473,7 +518,6 @@ export const VimHandleKeyDown = (
       try {
         const text = view.state.doc.textContent;
 
-        // Find current line
         let lineStart = 0;
         for (let i = current - 1; i >= 0; i--) {
           if (text[i] === "\n") {
@@ -531,4 +575,6 @@ export const VimHandleKeyDown = (
       return true;
     }
   }
-}
+
+  return false;
+};
